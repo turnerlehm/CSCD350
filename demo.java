@@ -1,5 +1,3 @@
-//BRANCH CHANGE EDIT!!
-
 public class Demo
 {
 public static void main(String [] args)
