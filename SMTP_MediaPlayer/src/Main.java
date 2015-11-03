@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.List;
+import java.util.Scanner;
 
 class MediaFile{};
 
@@ -7,6 +8,7 @@ public class Main
 {
 	List<String> allPlaylists;//just use the names of the playlist to load temporary lists?
 	List<MediaFile> allFiles;//all the files in the database. we need to create MediaFile object
+	static String currentCommand = "";
 
 	public static void main(String[] args) 
 	{		
@@ -15,7 +17,14 @@ public class Main
 
         //read database: scan through the tables in the database and create a list in memory for all the data 
         //(the groups, the playlists, etc) after this scan, the only time database should be accessed is to add or delete
-        
+		//main loop:
+		while(currentCommand.compareTo("exit") != 0)
+		{
+			System.out.println("current command = " + currentCommand);
+			displayUI();
+			processInput();
+		}
+        exit();
 	}
 	
 	void scanFiles()
@@ -35,7 +44,7 @@ public class Main
 			e.printStackTrace();
 		}
 	}
-	void displayUI()
+	static void displayUI()
 	{
 		//show all menu options, with switch for submenus 
 		/*
@@ -55,37 +64,43 @@ public class Main
 			***list of commands***
 			....
 		 */
+		System.out.println("**Media Player***");
 	}
 	void displayCommands()
 	{
 		//initiated by typing 'help' this displays all commands
+		System.out.println("**Displaying all commands***");
 	}
-	void processInput()
+	static void processInput()
 	{
 		//interprets what the user typed in and runs commands if valid
+		Scanner reader = new Scanner(System.in);  // Reading from System.in
+		System.out.println("Enter a number: ");
+		currentCommand = reader.nextLine();
 	}
 	
 	//===Commands functions
-	void createPlaylist()
+	static void createPlaylist()
 	{
 		//adds a list to current List<Playlist> and also to the database using specified file objects
 	}
-	void addToPlaylist(String playlistName, MediaFile file)
+	static void addToPlaylist(String playlistName, MediaFile file)
 	{
 		//this would probably be part of 'add' command run after a directory scan
 	}
-	void parseCommand(String command)
+	static void parseCommand(String command)
 	{
 		//self explanatory?
 	}
-	void playAudio(MediaFile audioFile)
+	static void playAudio(MediaFile audioFile)
 	{
 		
 	}
-	void exit()
+	static void exit()
 	{
 		//'exit' command closes program
 		//do any needed cleanup, database closings..
+		System.out.println("Closing program, goodbye!");
 	}
 
 }
