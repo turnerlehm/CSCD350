@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,6 +10,7 @@ public class Main
 	List<String> allPlaylists;//just use the names of the playlist to load temporary lists?
 	List<MediaFile> allFiles;//all the files in the database. we need to create MediaFile object
 	static String currentCommand = "";
+	static String [] menuItems = {"1. Music", "2. Artist", "3. Genre", "4. Playlists"};
 
 	public static void main(String[] args) 
 	{		
@@ -18,9 +20,9 @@ public class Main
         //read database: scan through the tables in the database and create a list in memory for all the data 
         //(the groups, the playlists, etc) after this scan, the only time database should be accessed is to add or delete
 		//main loop:
+		DB_Manager.getInstance().init();
 		while(currentCommand.compareTo("exit") != 0)
-		{
-			System.out.println("current command = " + currentCommand);
+		{			
 			displayUI();
 			processInput();
 		}
@@ -30,19 +32,6 @@ public class Main
 	void scanFiles()
 	{
 		//scan specified directory and add all media files of specified extension to a local list.		
-	}
-	void connectDatabase() throws SQLException
-	{
-		Connection c;
-		 try 
-		 {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:media_database.db");
-		} catch (ClassNotFoundException e) 
-		 {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	static void displayUI()
 	{
@@ -65,6 +54,12 @@ public class Main
 			....
 		 */
 		System.out.println("**Media Player***");
+		for(String s : menuItems)
+		{
+			System.out.println(s);
+		}		
+		
+		System.out.println("Enter ‘help’ for more commands");
 	}
 	void displayCommands()
 	{
@@ -75,8 +70,17 @@ public class Main
 	{
 		//interprets what the user typed in and runs commands if valid
 		Scanner reader = new Scanner(System.in);  // Reading from System.in
-		System.out.println("Enter a number: ");
+		System.out.println("$>:");
 		currentCommand = reader.nextLine();
+		
+		if(currentCommand.compareTo("open 1") == 0)
+		{
+			List<String> list = DB_Manager.getInstance().getAllMusic();
+			for(String s : list)
+			{
+				System.out.println(s);
+			}
+		}
 	}
 	
 	//===Commands functions
@@ -101,6 +105,7 @@ public class Main
 		//'exit' command closes program
 		//do any needed cleanup, database closings..
 		System.out.println("Closing program, goodbye!");
+		DB_Manager.getInstance().shutdown();
 	}
 
 }
