@@ -1,4 +1,10 @@
+<<<<<<< HEAD
+/*
+* this is in branch_mike
+*/
+=======
 //BRANCH CHANGE EDIT!!
+>>>>>>> parent of 60e1a98... reverted master version back to normal
 
 public class Demo
 {
