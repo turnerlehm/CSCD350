@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="SMTP_MediaPlayer/src/" kind="src" path=""/>
+	<classpathentry kind="src" path="SMTP_MediaPlayer/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="SMTP_MediaPlayer/bin"/>
+</classpath>
