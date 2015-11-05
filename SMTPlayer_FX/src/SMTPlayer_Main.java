@@ -27,7 +27,7 @@ public class SMTPlayer_Main extends Application
         DB_Manager.getInstance().mainController = fxmlLoader.getController();
 
         ps.setTitle("Media Player");
-        ps.setScene(new Scene(root, 800, 800));
+        ps.setScene(new Scene(root, 800, 400));
         ps.show();
 
         ps.getScene().getWindow().setOnCloseRequest( e ->
