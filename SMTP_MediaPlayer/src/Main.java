@@ -3,12 +3,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-class MediaFile{};
-
+class MediaFile{};//used for scan and add to playlist
+enum CommandType {OPEN_GROUP, PLAY_FILE, PLAY_GROUP};
+class Command{ int commandType; String filename; }; 
 public class Main 
 {
-	List<String> allPlaylists;//just use the names of the playlist to load temporary lists?
-	List<MediaFile> allFiles;//all the files in the database. we need to create MediaFile object
+	//List<String> allPlaylists;//just use the names of the playlist to load temporary lists?
+	//List<MediaFile> allFiles;//all the files in the database. we need to create MediaFile object
 	static String currentCommand = "";
 	static String [] menuItems = {"1. Music", "2. Artist", "3. Genre", "4. Playlists"};
 
@@ -72,8 +73,8 @@ public class Main
 		Scanner reader = new Scanner(System.in);  // Reading from System.in
 		System.out.print("$>");
 		currentCommand = reader.nextLine();
-		
-		if(currentCommand.compareTo("open 1") == 0)//if command == OPEN_MUSIC
+		//Command c = CommandParser.instance.parse(reader.nextLine());
+		if(currentCommand.compareTo("open 1") == 0)//if c.commandType == OPEN_Group then openGroupCommand(c)
 		{
 			displayList(DB_Manager.getInstance().getAllMusic());			
 		}
@@ -95,6 +96,17 @@ public class Main
 		}
 			
 	}
+	static void playCommand()
+	{
+		
+	}static void openFileCommand()
+	{
+		
+	}
+	static void openGroupCommand()
+	{
+		
+	}
 	static void displayList(List<String> list)
 	{		
 		for(String s : list)
@@ -103,21 +115,23 @@ public class Main
 		}
 	}
 	//===Commands functions
-	static void createPlaylist()
+	static void createPlaylist(String playlistName)
 	{
 		//adds a list to current List<Playlist> and also to the database using specified file objects
+		DB_Manager.getInstance().createPlaylist(playlistName)
 	}
-	static void addToPlaylist(String playlistName, MediaFile file)
+	static void addToPlaylist(String playlistName, List<MediaFile> files)
 	{
 		//this would probably be part of 'add' command run after a directory scan
+		DB_Manager.getInstance().addToPlaylist(playlistName, files);
 	}
 	static void parseCommand(String command)
 	{
 		//self explanatory?
 	}
-	static void playAudio(MediaFile audioFile)
+	static void playAudio(String fileName)
 	{
-		
+		DB_Manager.getInstance().getPath(fileName);
 	}
 	static void exit()
 	{
