@@ -21,9 +21,9 @@ public class Main
         //(the groups, the playlists, etc) after this scan, the only time database should be accessed is to add or delete
 		//main loop:
 		DB_Manager.getInstance().init();
+		displayMenu();
 		while(currentCommand.compareTo("exit") != 0)
-		{			
-			displayUI();
+		{						
 			processInput();
 		}
         exit();
@@ -33,7 +33,7 @@ public class Main
 	{
 		//scan specified directory and add all media files of specified extension to a local list.		
 	}
-	static void displayUI()
+	static void displayMenu()
 	{
 		//show all menu options, with switch for submenus 
 		/*
@@ -70,19 +70,38 @@ public class Main
 	{
 		//interprets what the user typed in and runs commands if valid
 		Scanner reader = new Scanner(System.in);  // Reading from System.in
-		System.out.println("$>:");
+		System.out.print("$>");
 		currentCommand = reader.nextLine();
 		
-		if(currentCommand.compareTo("open 1") == 0)
+		if(currentCommand.compareTo("open 1") == 0)//if command == OPEN_MUSIC
 		{
-			List<String> list = DB_Manager.getInstance().getAllMusic();
-			for(String s : list)
-			{
-				System.out.println(s);
-			}
+			displayList(DB_Manager.getInstance().getAllMusic());			
+		}
+		else if(currentCommand.compareTo("open 2") == 0)
+		{
+			displayList(DB_Manager.getInstance().getArtists());
+		}
+		else if(currentCommand.compareTo("open 3") == 0)
+		{
+			displayList(DB_Manager.getInstance().getGenres());
+		}
+		else if(currentCommand.compareTo("open 4") == 0)
+		{
+			displayList(DB_Manager.getInstance().getPlaylists());
+		}
+		else if(currentCommand.compareTo("home") == 0)
+		{
+			displayMenu();
+		}
+			
+	}
+	static void displayList(List<String> list)
+	{		
+		for(String s : list)
+		{
+			System.out.println(s);
 		}
 	}
-	
 	//===Commands functions
 	static void createPlaylist()
 	{
@@ -117,6 +136,7 @@ open -p playlist_name;//opens a playlist, displaying all files
 play -p playlist_name; //plays all files in that playlist
 play -a artist_name; //plays all files by that artist
 play -g genre_name
+home; shows menu
 help;//displays all commands
 help command_name; specific documentation for that command
 exit; closes the program
