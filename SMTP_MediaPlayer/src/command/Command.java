@@ -1,35 +1,30 @@
 package command;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Command
 {
 	public final COMMAND_TYPE _Command_Type;
-	private FLAG_TYPE _Flag;
-	private String _Parameter;
+	private List<Flag> _Flags;
 	
 	public Command(COMMAND_TYPE type)
 	{
 		_Command_Type = type;
-		_Parameter = "";
-		_Flag = FLAG_TYPE.NOFLAG;
+		_Flags = new ArrayList<Flag>();
 	}
 	
-	public void addFlag(FLAG_TYPE flagToAdd)
+	public void addFlag(Flag flagToAdd) throws InvalidCommandException
 	{
-		_Flag = flagToAdd;
+		if(_Flags.contains(flagToAdd))
+		{
+			throw new InvalidCommandException("Flag has already been set");
+		}
+		_Flags.add(flagToAdd);
 	}
 	
-	public void setParameter(String parameterIn)
+	public List<Flag> getFlags()
 	{
-		_Parameter = parameterIn;
-	}
-	
-	public FLAG_TYPE getFlag()
-	{
-		return this._Flag;
-	}
-	
-	public String getParameter()
-	{
-		return _Parameter;
+		return _Flags;
 	}
 }

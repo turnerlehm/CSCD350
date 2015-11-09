@@ -5,5 +5,7 @@ public enum COMMAND_TYPE
 	OPEN,
 	EXIT,
 	PLAY,
-	HELP
+	HELP,
+	PAUSE,
+	STOP,
 }

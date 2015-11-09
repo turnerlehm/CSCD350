@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Scanner;
 import command.*;
 
-import command.CommandParser;
-
 class MediaFile{};//used for scan and add to playlist
 enum CommandType {OPEN_GROUP, PLAY_FILE, PLAY_GROUP};
 class Command{ int commandType; String filename; }; 
@@ -24,17 +22,22 @@ public class Main
         //read database: scan through the tables in the database and create a list in memory for all the data 
         //(the groups, the playlists, etc) after this scan, the only time database should be accessed is to add or delete
 		//main loop:
-<<<<<<< HEAD
 		
-=======
-		DB_Manager.getInstance().init();
-		displayMenu();
->>>>>>> origin/branch_sam
-		while(currentCommand.compareTo("exit") != 0)
-		{						
-			processInput();
+		
+		CommandParser c = CommandParser.getInstance();
+		command.Command cmd = c.parseCommand("play -s stop");
+		System.out.println(cmd._Command_Type);
+		List<Flag> flags = cmd.getFlags();
+		for(Flag f: flags)
+		{
+			System.out.println(f._Flag + " " + f._Parameter);
 		}
-        exit();
+		
+		//while(currentCommand.compareTo("exit") != 0)
+		//{						
+		//	processInput();
+		//}
+        //exit();
 	}
 	
 	void scanFiles()

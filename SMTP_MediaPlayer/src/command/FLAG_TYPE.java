@@ -6,5 +6,6 @@ public enum FLAG_TYPE
 	GENRE,
 	PLAYLIST,
 	SONG,
+	FILETYPE,
 	NOFLAG
 }
