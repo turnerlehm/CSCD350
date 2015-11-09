@@ -12,7 +12,9 @@ public class Main
 	//List<MediaFile> allFiles;//all the files in the database. we need to create MediaFile object
 	static String currentCommand = "";
 	static String [] menuItems = {"1. Music", "2. Artist", "3. Genre", "4. Playlists"};
-
+	List<MediaFile> currentDisplay;//display numbered and grab by index. shows .ext. getInfo lets you see all file details 
+	static DB_Manager dbm;
+	
 	public static void main(String[] args) 
 	{		
         //connectDatabase(); open a connection to the databse, check if it is empty.
@@ -21,7 +23,8 @@ public class Main
         //read database: scan through the tables in the database and create a list in memory for all the data 
         //(the groups, the playlists, etc) after this scan, the only time database should be accessed is to add or delete
 		//main loop:
-		DB_Manager.getInstance().init();
+		dbm = DB_Manager.getInstance();
+		dbm.init();
 		displayMenu();
 		while(currentCommand.compareTo("exit") != 0)
 		{						
@@ -61,6 +64,7 @@ public class Main
 		}		
 		
 		System.out.println("Enter ‘help’ for more commands");
+		playAudio("strobe", null);
 	}
 	void displayCommands()
 	{
@@ -76,19 +80,19 @@ public class Main
 		//Command c = CommandParser.instance.parse(reader.nextLine());
 		if(currentCommand.compareTo("open 1") == 0)//if c.commandType == OPEN_Group then openGroupCommand(c)
 		{
-			displayList(DB_Manager.getInstance().getAllMusic());			
+			displayList(dbm.getAllMusic());			
 		}
 		else if(currentCommand.compareTo("open 2") == 0)
 		{
-			displayList(DB_Manager.getInstance().getArtists());
+			displayList(dbm.getArtists());
 		}
 		else if(currentCommand.compareTo("open 3") == 0)
 		{
-			displayList(DB_Manager.getInstance().getGenres());
+			displayList(dbm.getGenres());
 		}
 		else if(currentCommand.compareTo("open 4") == 0)
 		{
-			displayList(DB_Manager.getInstance().getPlaylists());
+			displayList(dbm.getPlaylists());
 		}
 		else if(currentCommand.compareTo("home") == 0)
 		{
@@ -105,6 +109,14 @@ public class Main
 	}
 	static void openGroupCommand()
 	{
+		//scan()
+		//select from list, add selected to new or default playlist
+		//for each item selected, add file to DB. 
+		//if playlistName specified, add all to playlist (by looking at database names)
+		//>DB.addFile(filename) returns the int id or -1 if failed
+		//DB.addToPlaylist(playlistName, int fileID)//this forces users to confirm first the file is in the db
+		
+
 		
 	}
 	static void displayList(List<String> list)
@@ -118,27 +130,49 @@ public class Main
 	static void createPlaylist(String playlistName)
 	{
 		//adds a list to current List<Playlist> and also to the database using specified file objects
-		DB_Manager.getInstance().createPlaylist(playlistName)
+		if(dbm.getPlaylistID(playlistName) != -1)
+		{
+			
+		}
+		dbm.createPlaylist(playlistName);
+	}
+	static void deletePlaylist(String playlistName)
+	{
+		dbm.deletePlaylist(playlistName);
 	}
 	static void addToPlaylist(String playlistName, List<MediaFile> files)
 	{
 		//this would probably be part of 'add' command run after a directory scan
-		DB_Manager.getInstance().addToPlaylist(playlistName, files);
-	}
-	static void parseCommand(String command)
+		int pid = 0;//TODO retrieve playlist id by making sure it exists first
+		dbm.addToPlaylist(pid, files);
+	}	
+	static void addFile(MediaFile file)
 	{
-		//self explanatory?
+		//puts file in database wihtout adding it to any playlist. will be part of "default" playlist
+		
 	}
-	static void playAudio(String fileName)
-	{
-		DB_Manager.getInstance().getPath(fileName);
+	static void playAudio(String fileName, String ext)//TODO should prol play by id ratehr than filename, easier to delete right thing
+	{		
+		String path = dbm.getPath(fileName);
+		if(path == null)
+		{
+			System.out.println("file not found on disk. Removing from Database...");
+			//TODO go into database and remove the file
+		}
+		else
+		{
+			System.out.println("playing audio file: " + path + "/" + fileName);
+		}
+		
+		//to be able to say 'play strobe; play strobe.mp3' we'll probably need playAudio to take fileName And extension. 
+		//the command parser will need to separate these so that ext is null and dbm will ignore it if it is
 	}
 	static void exit()
 	{
 		//'exit' command closes program
 		//do any needed cleanup, database closings..
 		System.out.println("Closing program, goodbye!");
-		DB_Manager.getInstance().shutdown();
+		dbm.shutdown();
 	}
 
 }

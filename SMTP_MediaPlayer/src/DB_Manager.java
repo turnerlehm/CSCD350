@@ -196,4 +196,44 @@ public class DB_Manager
 
         return playlistMusic;
     }
+    String getPath(String fileName)
+    {
+    	 String path = "";
+    	 
+         Statement st = null;
+         try
+         {
+             st = c.createStatement();
+             ResultSet rs = st.executeQuery("SELECT directory_path FROM music WHERE lower(filename) = '" + fileName.toLowerCase() + "';");
+
+             rs.next();
+             
+             path = rs.getString("directory_path");//return single playlist id
+             if(path == "" || path == null) path = null;
+             st.close();
+         } catch (SQLException e)
+         {
+             e.printStackTrace();
+         }
+
+         return path;
+    }
+    int getPlaylistID(String playlistName)//TODO implement
+	{
+		return -1;
+	}
+	boolean createPlaylist(String playlistName)//TODO implement
+	{
+		return true;
+	}
+	
+	boolean deletePlaylist(String playlistName)//TODO implement
+	{
+		
+		return true;		
+	}
+	void addToPlaylist(int playlist_id, List<MediaFile> files)
+	{
+
+	}
 }
