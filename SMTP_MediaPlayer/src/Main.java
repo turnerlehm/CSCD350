@@ -2,6 +2,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+<<<<<<< HEAD
+=======
+import command.*;
+>>>>>>> refs/remotes/origin/branch_mike
 
 class MediaFile{};//used for scan and add to playlist
 enum CommandType {OPEN_GROUP, PLAY_FILE, PLAY_GROUP};
@@ -12,10 +16,15 @@ public class Main
 	//List<MediaFile> allFiles;//all the files in the database. we need to create MediaFile object
 	static String currentCommand = "";
 	static String [] menuItems = {"1. Music", "2. Artist", "3. Genre", "4. Playlists"};
+<<<<<<< HEAD
 	List<MediaFile> currentDisplay;//display numbered and grab by index. shows .ext. getInfo lets you see all file details 
 	static DB_Manager dbm;
 	
 	public static void main(String[] args) 
+=======
+
+	public static void main(String[] args) throws InvalidCommandException 
+>>>>>>> refs/remotes/origin/branch_mike
 	{		
         //connectDatabase(); open a connection to the databse, check if it is empty.
 		//scanFiles();//if database is empty this will automatically be run on the current directory
@@ -23,6 +32,7 @@ public class Main
         //read database: scan through the tables in the database and create a list in memory for all the data 
         //(the groups, the playlists, etc) after this scan, the only time database should be accessed is to add or delete
 		//main loop:
+<<<<<<< HEAD
 		dbm = DB_Manager.getInstance();
 		dbm.init();
 		displayMenu();
@@ -31,6 +41,24 @@ public class Main
 			processInput();
 		}
         exit();
+=======
+		
+		
+		CommandParser c = CommandParser.getInstance();
+		command.Command cmd = c.parseCommand("play -s stop");
+		System.out.println(cmd._Command_Type);
+		List<Flag> flags = cmd.getFlags();
+		for(Flag f: flags)
+		{
+			System.out.println(f._Flag + " " + f._Parameter);
+		}
+		
+		//while(currentCommand.compareTo("exit") != 0)
+		//{						
+		//	processInput();
+		//}
+        //exit();
+>>>>>>> refs/remotes/origin/branch_mike
 	}
 	
 	void scanFiles()
@@ -64,7 +92,10 @@ public class Main
 		}		
 		
 		System.out.println("Enter ‘help’ for more commands");
+<<<<<<< HEAD
 		playAudio("strobe", null);
+=======
+>>>>>>> refs/remotes/origin/branch_mike
 	}
 	void displayCommands()
 	{
@@ -80,6 +111,7 @@ public class Main
 		//Command c = CommandParser.instance.parse(reader.nextLine());
 		if(currentCommand.compareTo("open 1") == 0)//if c.commandType == OPEN_Group then openGroupCommand(c)
 		{
+<<<<<<< HEAD
 			displayList(dbm.getAllMusic());			
 		}
 		else if(currentCommand.compareTo("open 2") == 0)
@@ -93,6 +125,21 @@ public class Main
 		else if(currentCommand.compareTo("open 4") == 0)
 		{
 			displayList(dbm.getPlaylists());
+=======
+			displayList(DB_Manager.getInstance().getAllMusic());			
+		}
+		else if(currentCommand.compareTo("open 2") == 0)
+		{
+			displayList(DB_Manager.getInstance().getArtists());
+		}
+		else if(currentCommand.compareTo("open 3") == 0)
+		{
+			displayList(DB_Manager.getInstance().getGenres());
+		}
+		else if(currentCommand.compareTo("open 4") == 0)
+		{
+			displayList(DB_Manager.getInstance().getPlaylists());
+>>>>>>> refs/remotes/origin/branch_mike
 		}
 		else if(currentCommand.compareTo("home") == 0)
 		{
@@ -109,6 +156,7 @@ public class Main
 	}
 	static void openGroupCommand()
 	{
+<<<<<<< HEAD
 		//scan()
 		//select from list, add selected to new or default playlist
 		//for each item selected, add file to DB. 
@@ -117,6 +165,8 @@ public class Main
 		//DB.addToPlaylist(playlistName, int fileID)//this forces users to confirm first the file is in the db
 		
 
+=======
+>>>>>>> refs/remotes/origin/branch_mike
 		
 	}
 	static void displayList(List<String> list)
@@ -130,6 +180,7 @@ public class Main
 	static void createPlaylist(String playlistName)
 	{
 		//adds a list to current List<Playlist> and also to the database using specified file objects
+<<<<<<< HEAD
 		if(dbm.getPlaylistID(playlistName) != -1)
 		{
 			
@@ -139,10 +190,14 @@ public class Main
 	static void deletePlaylist(String playlistName)
 	{
 		dbm.deletePlaylist(playlistName);
+=======
+		DB_Manager.getInstance().createPlaylist(playlistName)
+>>>>>>> refs/remotes/origin/branch_mike
 	}
 	static void addToPlaylist(String playlistName, List<MediaFile> files)
 	{
 		//this would probably be part of 'add' command run after a directory scan
+<<<<<<< HEAD
 		int pid = 0;//TODO retrieve playlist id by making sure it exists first
 		dbm.addToPlaylist(pid, files);
 	}	
@@ -166,13 +221,28 @@ public class Main
 		
 		//to be able to say 'play strobe; play strobe.mp3' we'll probably need playAudio to take fileName And extension. 
 		//the command parser will need to separate these so that ext is null and dbm will ignore it if it is
+=======
+		DB_Manager.getInstance().addToPlaylist(playlistName, files);
+	}
+	static void parseCommand(String command)
+	{
+		//self explanatory?
+	}
+	static void playAudio(String fileName)
+	{
+		DB_Manager.getInstance().getPath(fileName);
+>>>>>>> refs/remotes/origin/branch_mike
 	}
 	static void exit()
 	{
 		//'exit' command closes program
 		//do any needed cleanup, database closings..
 		System.out.println("Closing program, goodbye!");
+<<<<<<< HEAD
 		dbm.shutdown();
+=======
+		DB_Manager.getInstance().shutdown();
+>>>>>>> refs/remotes/origin/branch_mike
 	}
 
 }

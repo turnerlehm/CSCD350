@@ -196,6 +196,7 @@ public class DB_Manager
 
         return playlistMusic;
     }
+<<<<<<< HEAD
     String getPath(String fileName)
     {
     	 String path = "";
@@ -236,4 +237,6 @@ public class DB_Manager
 	{
 
 	}
+=======
+>>>>>>> refs/remotes/origin/branch_mike
 }
