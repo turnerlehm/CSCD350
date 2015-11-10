@@ -232,7 +232,7 @@ public class DB_Manager
 		
 		return true;		
 	}
-	void addToPlaylist(int playlist_id, List<MediaFile> files)
+	void addToPlaylist(String playlist_id, List<MediaFile> files)
 	{
 
 	}
