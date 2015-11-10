@@ -35,16 +35,6 @@ public class Main
 			processInput();
 		}
         exit();
-
-		
-		CommandParser c = CommandParser.getInstance();
-		command.Command cmd = c.parseCommand("play -s stop");
-		System.out.println(cmd._Command_Type);
-		List<Flag> flags = cmd.getFlags();
-		for(Flag f: flags)
-		{
-			System.out.println(f._Flag + " " + f._Parameter);
-		}
 		
 		//while(currentCommand.compareTo("exit") != 0)
 		//{						
@@ -173,7 +163,7 @@ public class Main
 	static void deletePlaylist(String playlistName)
 	{
 		dbm.deletePlaylist(playlistName);
-		DB_Manager.getInstance().createPlaylist(playlistName)
+		DB_Manager.getInstance().createPlaylist(playlistName);
 	}
 	static void addToPlaylist(String playlistName, List<MediaFile> files)
 	{
@@ -201,7 +191,7 @@ public class Main
 		
 		//to be able to say 'play strobe; play strobe.mp3' we'll probably need playAudio to take fileName And extension. 
 		//the command parser will need to separate these so that ext is null and dbm will ignore it if it is
-		DB_Manager.getInstance().addToPlaylist(playlistName, files);
+		//DB_Manager.getInstance().addToPlaylist(playlistName, files);
 	}
 	static void parseCommand(String command)
 	{
