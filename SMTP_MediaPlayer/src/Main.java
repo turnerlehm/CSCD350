@@ -75,7 +75,13 @@ public class Main
 		
 		System.out.println("Enter ‘help’ for more commands");
 <<<<<<< HEAD
+<<<<<<< HEAD
 		//playAudio("strobe", null);
+=======
+
+		playAudio("strobe", null);
+
+>>>>>>> c684ce58c21dde0d139562d01a0d3b18741a1652
 =======
 
 		playAudio("strobe", null);
