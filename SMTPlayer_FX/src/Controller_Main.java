@@ -1,11 +1,19 @@
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
-
+/**
+ * Created by Sam Arutyunyan on 11/2/2015.
+ */
 public class Controller_Main
 {
     public Controller_Main(){}
@@ -106,11 +114,10 @@ public class Controller_Main
 
     }
 
-
     public void onScanButton()
     {
-        /*
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Scour_UI.fxml"));
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("scan_ui.fxml"));
         Parent root1 = null;
         try {
             root1 = fxmlLoader.load();
@@ -123,9 +130,12 @@ public class Controller_Main
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(new Scene(root1));
         stage.showAndWait();
-        */
-    };
 
+    };
+    public void refresh()
+    {
+        lv_menu.getSelectionModel().select(0);
+    }
 }//end Controller.java
 
 

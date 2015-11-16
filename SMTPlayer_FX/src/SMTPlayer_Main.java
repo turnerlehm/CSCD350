@@ -5,11 +5,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Created by Turtle on 11/2/2015.
+ * Created by Sam Arutyunyan on 11/2/2015.
  */
 public class SMTPlayer_Main extends Application
 {
     static Stage primaryStage;
+    static Controller_Main mainController;
     public static void main(String[] args)
     {
         launch(args);//goes into Application.java creates necessities then calls this.start()
@@ -23,8 +24,7 @@ public class SMTPlayer_Main extends Application
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("main_ui.fxml"));
 
         Parent root = (Parent) fxmlLoader.load();
-        Controller_Main c = new Controller_Main();
-        DB_Manager.getInstance().mainController = fxmlLoader.getController();
+        mainController = fxmlLoader.getController();
 
         ps.setTitle("Media Player");
         ps.setScene(new Scene(root, 800, 400));
@@ -34,5 +34,13 @@ public class SMTPlayer_Main extends Application
         {
             DB_Manager.getInstance().shutdown();
         });
+    }
+    public static Stage getPrimaryStage()
+    {
+        return primaryStage;
+    }
+    public static Controller_Main getMainController()
+    {
+        return mainController;
     }
 }

@@ -5,7 +5,6 @@ import java.util.Scanner;
 import command.*;
 
 
-class MediaFile{};//used for scan and add to playlist
 enum CommandType {OPEN_GROUP, PLAY_FILE, PLAY_GROUP};
 class Command{ int commandType; String filename; }; 
 public class Main 
@@ -75,6 +74,9 @@ public class Main
 		}		
 		
 		System.out.println("Enter ‘help’ for more commands");
+		//playAudio("strobe", null);
+		playAudio("strobe", null);
+
 
 		playAudio("strobe", null);
 

@@ -222,18 +222,85 @@ public class DB_Manager
 	{
 		return -1;
 	}
-	boolean createPlaylist(String playlistName)//TODO implement
-	{
-		return true;
-	}
 	
 	boolean deletePlaylist(String playlistName)//TODO implement
 	{
 		
 		return true;		
 	}
-	void addToPlaylist(int playlist_id, List<MediaFile> files)
-	{
+	boolean createPlaylist(String playlistName)//TODO implement
+    {
+        try
+        {
+            PreparedStatement statement = c.prepareStatement("INSERT INTO playlists (playlist_name) VALUES(?);");
+            statement.setString(1, playlistName);
+            statement.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    //assumes both playlist and music file have already been added to database and just makes
+    //a connection between them
+    boolean addToPlaylist(String newPlaylist, int musicID)
+    {
+        //get playlist id
+        int pId = -1;
+        int result = 0;
+        try
+        {
+            PreparedStatement st = c.prepareStatement("SELECT playlist_id FROM playlists WHERE playlist_name = ?;");
+            st.setString(1, newPlaylist);
+            ResultSet rs = st.executeQuery();
 
-	}
+            rs.next();
+            pId = rs.getInt("playlist_id");
+
+
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println("playlist: " + newPlaylist + ", pId: " + pId + " musicID: " + musicID);
+
+        //add playlist_id/music_id combos to playlist_coneections
+        try
+        {
+            PreparedStatement st = c.prepareStatement("INSERT INTO playlist_connections (music_id, playlist_id) VALUES(?,?);");
+            st.setInt(1, musicID);
+            st.setInt(2, pId);
+            result = st.executeUpdate();
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        if(result == 0) return false; else return true;
+    }
+    //returns music_id that is automatically generated
+    int addMedia(MediaFile media)
+    {
+        try
+        {
+            PreparedStatement st = c.prepareStatement(
+                    "INSERT INTO music (filename, extension, artist, directory_path, genre) VALUES(?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+            st.setString(1, media.getFilename());
+            st.setString(2, media.getExt());
+            st.setString(3, media.getArtist());
+            st.setString(4, media.getDirectory());
+            st.setString(5, media.getGenre());
+            st.executeUpdate();
+            ResultSet rs = st.getGeneratedKeys();
+            rs.next();
+            return rs.getInt(1);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

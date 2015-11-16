@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller_Scan">
+   <children>
+         <HBox prefHeight="0.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <children>
+               <Label text="Target Path">
+                  <HBox.margin>
+                     <Insets left="5.0" top="10.0" />
+                  </HBox.margin>
+            </Label>
+               <TextField fx:id="dir_text" prefWidth="300.0">
+                  <HBox.margin>
+                     <Insets left="5.0" top="10.0" />
+                  </HBox.margin>
+            </TextField>
+               <Button mnemonicParsing="false" onAction="#onBrowseButton" text="Browse">
+                  <HBox.margin>
+                     <Insets left="5.0" top="10.0" />
+                  </HBox.margin>
+            </Button>
+            </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+         </HBox>
+      <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="600.0">
+         <children>
+            <CheckBox fx:id="cb_wav" mnemonicParsing="false" selected="true" text="wav">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="cb_mp3" mnemonicParsing="false" selected="true" text="mp3" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+      </HBox>
+         <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <children>
+               <CheckBox fx:id="cb_subdir" mnemonicParsing="false" text="Search Subdirectories">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </CheckBox>
+               <Button mnemonicParsing="false" onAction="#onScanButton" text="Scan" />
+            </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+         </HBox>
+   </children>
+</VBox>
