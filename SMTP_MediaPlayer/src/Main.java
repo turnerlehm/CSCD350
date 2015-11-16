@@ -2,6 +2,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import command.*;
+
 
 enum CommandType {OPEN_GROUP, PLAY_FILE, PLAY_GROUP};
 class Command{ int commandType; String filename; }; 
@@ -11,10 +13,11 @@ public class Main
 	//List<MediaFile> allFiles;//all the files in the database. we need to create MediaFile object
 	static String currentCommand = "";
 	static String [] menuItems = {"1. Music", "2. Artist", "3. Genre", "4. Playlists"};
+
 	List<MediaFile> currentDisplay;//display numbered and grab by index. shows .ext. getInfo lets you see all file details 
 	static DB_Manager dbm;
-	
-	public static void main(String[] args) 
+
+	public static void main(String[] args) throws InvalidCommandException 
 	{		
         //connectDatabase(); open a connection to the databse, check if it is empty.
 		//scanFiles();//if database is empty this will automatically be run on the current directory
@@ -22,6 +25,7 @@ public class Main
         //read database: scan through the tables in the database and create a list in memory for all the data 
         //(the groups, the playlists, etc) after this scan, the only time database should be accessed is to add or delete
 		//main loop:
+
 		dbm = DB_Manager.getInstance();
 		dbm.init();
 		displayMenu();
@@ -30,6 +34,13 @@ public class Main
 			processInput();
 		}
         exit();
+		
+		//while(currentCommand.compareTo("exit") != 0)
+		//{						
+		//	processInput();
+		//}
+        //exit();
+
 	}
 	
 	void scanFiles()
@@ -63,7 +74,13 @@ public class Main
 		}		
 		
 		System.out.println("Enter ‘help’ for more commands");
+<<<<<<< HEAD
 		//playAudio("strobe", null);
+=======
+
+		playAudio("strobe", null);
+
+>>>>>>> c684ce58c21dde0d139562d01a0d3b18741a1652
 	}
 	void displayCommands()
 	{
@@ -92,6 +109,19 @@ public class Main
 		else if(currentCommand.compareTo("open 4") == 0)
 		{
 			displayList(dbm.getPlaylists());
+			displayList(DB_Manager.getInstance().getAllMusic());			
+		}
+		else if(currentCommand.compareTo("open 2") == 0)
+		{
+			displayList(DB_Manager.getInstance().getArtists());
+		}
+		else if(currentCommand.compareTo("open 3") == 0)
+		{
+			displayList(DB_Manager.getInstance().getGenres());
+		}
+		else if(currentCommand.compareTo("open 4") == 0)
+		{
+			displayList(DB_Manager.getInstance().getPlaylists());
 		}
 		else if(currentCommand.compareTo("home") == 0)
 		{
@@ -115,8 +145,6 @@ public class Main
 		//>DB.addFile(filename) returns the int id or -1 if failed
 		//DB.addToPlaylist(playlistName, int fileID)//this forces users to confirm first the file is in the db
 		
-
-		
 	}
 	static void displayList(List<String> list)
 	{		
@@ -138,6 +166,7 @@ public class Main
 	static void deletePlaylist(String playlistName)
 	{
 		dbm.deletePlaylist(playlistName);
+		DB_Manager.getInstance().createPlaylist(playlistName);
 	}
 	static void addToPlaylist(String playlistName, List<MediaFile> files)
 	{
@@ -165,6 +194,15 @@ public class Main
 		
 		//to be able to say 'play strobe; play strobe.mp3' we'll probably need playAudio to take fileName And extension. 
 		//the command parser will need to separate these so that ext is null and dbm will ignore it if it is
+		//DB_Manager.getInstance().addToPlaylist(playlistName, files);
+	}
+	static void parseCommand(String command)
+	{
+		//self explanatory?
+	}
+	static void playAudio(String fileName)
+	{
+		DB_Manager.getInstance().getPath(fileName);
 	}
 	static void exit()
 	{
@@ -172,6 +210,7 @@ public class Main
 		//do any needed cleanup, database closings..
 		System.out.println("Closing program, goodbye!");
 		dbm.shutdown();
+		DB_Manager.getInstance().shutdown();
 	}
 
 }
