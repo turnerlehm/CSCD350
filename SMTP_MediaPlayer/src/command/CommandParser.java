@@ -93,8 +93,7 @@ public class CommandParser
       }
       if(!(parameter.equals("")))
       {
-    	  parameter = parameter.trim();
-    	  cmd.addFlag(new Flag(FLAG_TYPE.NOFLAG, parameter));
+    	  cmd.addFlag(new Flag(FLAG_TYPE.NOFLAG, parameter.trim()));
       }
       return cmd;
    }
