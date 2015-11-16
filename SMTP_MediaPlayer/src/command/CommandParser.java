@@ -25,90 +25,75 @@ public class CommandParser
       String[] tokens = commandToParse.split(" ");
       for (int x=0; x < tokens.length; x++)
       {
-    	 if(tokens[x].equals("play") || tokens[x].equals("PLAY") || tokens[x].equals("Play"))
+    	 if((tokens[x].equals("play") || tokens[x].equals("PLAY") || tokens[x].equals("Play")) && x == 0)
     	 {
-    		 if(cmd != null)
-    			 throw new InvalidCommandException();
         	 cmd = new Command(COMMAND_TYPE.PLAY);     
          }
-    	 else if(tokens[x].equals("pause") || tokens[x].equals("Pause") || tokens[x].equals("PAUSE"))
+    	 else if((tokens[x].equals("pause") || tokens[x].equals("Pause") || tokens[x].equals("PAUSE")) && x == 0)
     	 {
-    		 if(cmd != null)
-    			 throw new InvalidCommandException();
-        	 cmd = new Command(COMMAND_TYPE.PAUSE);     
+        	 return new Command(COMMAND_TYPE.PAUSE);     
          }
-    	 else if(tokens[x].equals("stop") || tokens[x].equals("Stop") || tokens[x].equals("STOP"))
+    	 else if((tokens[x].equals("stop") || tokens[x].equals("Stop") || tokens[x].equals("STOP")) && x == 0)
     	 {
-    		 if(cmd != null)
-    			 throw new InvalidCommandException();
-        	 cmd = new Command(COMMAND_TYPE.STOP);     
+        	 return new Command(COMMAND_TYPE.STOP);     
          }
-    	 else if(tokens[x].equals("open") || tokens[x].equals("OPEN") || tokens[x].equals("Open"))
+    	 else if((tokens[x].equals("open") || tokens[x].equals("OPEN") || tokens[x].equals("Open")) && x == 0)
     	 {
-    		 if(cmd != null)
-    			 throw new InvalidCommandException();
         	 cmd = new Command(COMMAND_TYPE.OPEN);     
          }
-    	 else if(tokens[x].equals("exit") || tokens[x].equals("EXIT") || tokens[x].equals("Exit"))
+    	 else if((tokens[x].equals("exit") || tokens[x].equals("EXIT") || tokens[x].equals("Exit") ) && x == 0)
     	 {
-    		 if(cmd != null)
-    			 throw new InvalidCommandException();
         	 return cmd = new Command(COMMAND_TYPE.EXIT);     
          }
-    	 else if(tokens[x].equals("help") || tokens[x].equals("Help") || tokens[x].equals("HELP"))
+    	 else if((tokens[x].equals("help") || tokens[x].equals("Help") || tokens[x].equals("HELP") ) && x == 0)
     	 {
-    		 if(cmd != null)
-    			 throw new InvalidCommandException();
         	 return cmd = new Command(COMMAND_TYPE.HELP);     
          }
-         else if(tokens[x].equals("-A") || tokens[x].equals("-a"))
+    	 else if(x != 0 && cmd != null)
+    	 {
+	         if(tokens[x].equals("-A") || tokens[x].equals("-a"))
+	         {
+	        	 String p = parseParameter(x,tokens);
+	        	 cmd.addFlag(new Flag(FLAG_TYPE.ARTIST, p));
+	        	 x += p.split(" ").length;
+	         }
+	         else if(tokens[x].equals("-S") || tokens[x].equals("-s"))
+	         {
+	        	 String p = parseParameter(x,tokens);
+	        	 cmd.addFlag(new Flag(FLAG_TYPE.SONG, p));
+	        	 x += p.split(" ").length;
+	         }
+	         else if(tokens[x].equals("-G") || tokens[x].equals("-g"))
+	         {
+	        	 String p = parseParameter(x,tokens);
+	        	 cmd.addFlag(new Flag(FLAG_TYPE.GENRE, p));
+	        	 x += p.split(" ").length;
+	         }
+	         else if(tokens[x].equals("-P") || tokens[x].equals("-p"))
+	         {
+	        	 String p = parseParameter(x,tokens);
+	        	 cmd.addFlag(new Flag(FLAG_TYPE.PLAYLIST, p));
+	        	 x += p.split(" ").length;
+	         }
+	         else if(tokens[x].equals("-E") || tokens[x].equals("-e"))
+	         {
+	        	 String p = parseParameter(x,tokens);
+	        	 cmd.addFlag(new Flag(FLAG_TYPE.FILETYPE, p));
+	        	 x += p.split(" ").length;
+	         }
+	         else
+	         {
+	        	 parameter += tokens[x] + " ";
+	         }
+    	 }
+    	 else
          {
-        	 if(cmd == null)
-        		 throw new InvalidCommandException("Declare a Command Before Setting a Flag");
-        	 String p = parseParameter(x,tokens);
-        	 cmd.addFlag(new Flag(FLAG_TYPE.ARTIST, p));
-        	 x += p.split(" ").length;
-         }
-         else if(tokens[x].equals("-S") || tokens[x].equals("-s"))
-         {
-        	 if(cmd == null)
-        		 throw new InvalidCommandException("Declare a Command Before Setting a Flag");
-        	 String p = parseParameter(x,tokens);
-        	 cmd.addFlag(new Flag(FLAG_TYPE.SONG, p));
-        	 x += p.split(" ").length;
-         }
-         else if(tokens[x].equals("-G") || tokens[x].equals("-g"))
-         {
-        	 if(cmd == null)
-        		 throw new InvalidCommandException("Declare a Command Before Setting a Flag");
-        	 String p = parseParameter(x,tokens);
-        	 cmd.addFlag(new Flag(FLAG_TYPE.GENRE, p));
-        	 x += p.split(" ").length;
-         }
-         else if(tokens[x].equals("-P") || tokens[x].equals("-p"))
-         {
-        	 if(cmd == null)
-        		 throw new InvalidCommandException("Declare a Command Before Setting a Flag");
-        	 String p = parseParameter(x,tokens);
-        	 cmd.addFlag(new Flag(FLAG_TYPE.PLAYLIST, p));
-        	 x += p.split(" ").length;
-         }
-         else if(tokens[x].equals("-E") || tokens[x].equals("-e"))
-         {
-        	 if(cmd == null)
-        		 throw new InvalidCommandException("Declare a Command Before Setting a Flag");
-        	 String p = parseParameter(x,tokens);
-        	 cmd.addFlag(new Flag(FLAG_TYPE.FILETYPE, p));
-        	 x += p.split(" ").length;
-         }
-         else
-         {
-        	 parameter += tokens[x] + " ";
+    		 throw new InvalidCommandException("Entered Command is Not Valid");  
          }
       }
       if(!(parameter.equals("")))
       {
-    	  parameter.trim();
+    	  parameter = parameter.trim();
     	  cmd.addFlag(new Flag(FLAG_TYPE.NOFLAG, parameter));
       }
       return cmd;
@@ -180,7 +165,6 @@ public class CommandParser
 	    	   parameter += tokens[x] + " ";
 	       }
 	   }
-	   parameter.trim();
-	   return parameter;
+	   return parameter.trim();
    }
 }
