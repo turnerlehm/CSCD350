@@ -75,14 +75,6 @@ public class Main
 		
 		System.out.println("Enter ‘help’ for more commands");
 
-		//playAudio("strobe", null);
-
-
-		playAudio("strobe", null);
-
-		playAudio("strobe", null);
-
-
 	}
 	void displayCommands()
 	{

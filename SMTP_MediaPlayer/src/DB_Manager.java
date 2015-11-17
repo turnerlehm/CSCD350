@@ -44,92 +44,49 @@ public class DB_Manager
             c = null;
         }
     }
-    List<String> getAllMusic()
+  //expecting to call from parameterless functions, no danger of SQL injection
+    private List<String> getList(String key, String table, String group)
     {
-        List<String> allMusic = new ArrayList<String>();
+        List<String> list = new ArrayList<String>();
         try
         {
             Statement st = c.createStatement();
-            ResultSet rs = st.executeQuery("SELECT filename FROM music;");
+            ResultSet rs = st.executeQuery("SELECT " + key + " FROM " + table + " GROUP BY " + group + ";");
             while (rs.next())
             {
-                String str = rs.getString("filename");
-                allMusic.add(str);
+                String str = rs.getString(key);
+                list.add(str);
             }
         }
         catch (SQLException e)
         {
             e.printStackTrace();
         }
-        return allMusic;
+        return list;
+    }
+    List<String> getAllMusic()
+    {
+        return getList("filename", "music", "music_id");
     }
     List<String> getGenres()
+    {       
+        return getList("genre", "music", "genre");
+    }
+    List<String> getArtists() 
+    {        
+        return getList("artist", "music", "artist");
+    }
+    List<String> getPlaylists() 
+    {  
+        return getList("playlist_name", "playlists", "playlist_id");
+    }  
+
+    private List<String> getSpecificList(String group, String name) 
     {
-        List<String> genres = new ArrayList<String>();
-        PreparedStatement st = null;
-        try {
-            st = c.prepareStatement("SELECT genre FROM music GROUP BY genre;");
-            ResultSet rs = st.executeQuery();
-
-            // Fetch each row from the result set
-            while (rs.next())
-            {
-                String str = rs.getString("genre");
-
-                genres.add(str);
-            }
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-        return genres;
-    }
-
-    List<String> getGenre(String genreName) {
-        List<String> genreMusic = new ArrayList<String>();
-        PreparedStatement stmt = null;
-        try {
-
-            stmt = c.prepareStatement("SELECT * FROM music WHERE lower(genre) = '" + genreName.toLowerCase() + "';");
-            ResultSet rs = stmt.executeQuery();
-
-            // Fetch each row from the result set
-            while (rs.next()) {
-                String str = rs.getString("filename");
-
-                genreMusic.add(str);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return genreMusic;
-    }
-
-    List<String> getArtists() {
-        List<String> artists = null;
-        try {
-            artists = new ArrayList<String>();
-            String artistName = "mozart";
-            PreparedStatement stmt = c.prepareStatement("SELECT artist FROM music GROUP BY artist;");
-            ResultSet rs = stmt.executeQuery();
-
-            // Fetch each row from the result set
-            while (rs.next()) {
-                String str = rs.getString("artist");
-
-                artists.add(str);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return artists;
-    }
-
-    List<String> getArtist(String artistName) {
         List<String> artistMusic = null;
         try {
             artistMusic = new ArrayList<String>();
-            PreparedStatement stmt = c.prepareStatement("SELECT * FROM music WHERE lower(artist) = '" + artistName.toLowerCase() + "';");
+            PreparedStatement stmt = c.prepareStatement("SELECT filename FROM music WHERE lower(" + group + ") = '" + name.toLowerCase() + "';");
             ResultSet rs = stmt.executeQuery();
 
             // Fetch each row from the result set
@@ -143,26 +100,16 @@ public class DB_Manager
         }
         return artistMusic;
     }
-
-    List<String> getPlaylists() {
-        List<String> playlistMusic = null;
-        try {
-            playlistMusic = new ArrayList<String>();
-            PreparedStatement stmt = c.prepareStatement("SELECT playlist_name FROM playlists;");
-            ResultSet rs = stmt.executeQuery();
-
-            // Fetch each row from the result set
-            while (rs.next()) {
-                String str = rs.getString("playlist_name");
-
-                playlistMusic.add(str);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return playlistMusic;
+    List<String> getGenre(String genreName) 
+    {
+        return getSpecificList("genre", genreName);
     }
-
+    
+    List<String> getArtist(String artistName) 
+    {  
+        return getSpecificList("artist", artistName);
+    }
+    
     List<String> getPlaylist(String playlistName)
     {
 
