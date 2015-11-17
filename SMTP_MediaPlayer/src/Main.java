@@ -74,6 +74,14 @@ public class Main
 		}		
 		
 		System.out.println("Enter ‘help’ for more commands");
+<<<<<<< HEAD
+=======
+		//playAudio("strobe", null);
+		playAudio("strobe", null);
+
+
+		playAudio("strobe", null);
+>>>>>>> 8b0f659db1aa8027db6ef71be4eb7651858b54f1
 
 	}
 	void displayCommands()
