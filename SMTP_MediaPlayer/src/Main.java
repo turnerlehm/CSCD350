@@ -74,19 +74,15 @@ public class Main
 		}		
 		
 		System.out.println("Enter ‘help’ for more commands");
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 		//playAudio("strobe", null);
-=======
+
 
 		playAudio("strobe", null);
 
->>>>>>> c684ce58c21dde0d139562d01a0d3b18741a1652
-=======
-
 		playAudio("strobe", null);
 
->>>>>>> c684ce58c21dde0d139562d01a0d3b18741a1652
+
 	}
 	void displayCommands()
 	{
@@ -177,8 +173,9 @@ public class Main
 	static void addToPlaylist(String playlistName, List<MediaFile> files)
 	{
 		//this would probably be part of 'add' command run after a directory scan
-		int pid = 0;//TODO retrieve playlist id by making sure it exists first
-		dbm.addToPlaylist(pid, files);
+		
+		int musicID = 0;//TODO retrieve playlist id by making sure it exists first
+		dbm.addToPlaylist("playlist name", musicID);
 	}	
 	static void addFile(MediaFile file)
 	{
