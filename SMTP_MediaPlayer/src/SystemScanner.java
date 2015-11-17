@@ -1,4 +1,3 @@
-package console;
 
 import java.util.*;
 import java.io.*;
@@ -6,14 +5,16 @@ import java.io.*;
 /*
 SystemScanner.java
 
-Revision: 1
-Revised: N/A
+Revision: 2
+Revised: 11/16/2015
 Last revised: N/A
-Revising author(s): N/A
+Revising author(s): Turner Lehmbecker
 Author(s): Turner Lehmbecker
 
-A simple file system scanner that scans the sile system of a computer (or specified directory) for .mp3 and .wav files. 
+A simple file system scanner that scans the file system of a computer (or specified directory) for .mp3 and .wav files. 
 This scanner is thread safe.
+
+Maintains a current file list and a library file list for data integrity.
 */
 
 public class SystemScanner
@@ -24,6 +25,10 @@ public class SystemScanner
    //thread safe list
    private Vector<String> files;
    private Vector<String> paths;
+   private Vector<String> lib_files = new Vector<String>();
+   private Vector<String> lib_paths = new Vector<String>();
+   private Vector<String> cur_plist;
+   private Vector<String> cur_plist_paths;
    
    private SystemScanner(){}
    
@@ -71,6 +76,8 @@ public class SystemScanner
                {
                   file_list.add(dir.getName());
                   file_paths.add(dir.toString());
+                  lib_files.add(dir.getName());
+                  lib_paths.add(dir.toString());
                }
             }
             else
@@ -86,7 +93,7 @@ public class SystemScanner
       }
    }
    
-   public synchronized void printFileNames(Vector<String> files)
+   public synchronized void printFileNames()
    {
       System.out.println("Found " + files.size() + " files");
       for(String s : files)
@@ -94,12 +101,21 @@ public class SystemScanner
       notify();
    }
    
+   public synchronized void printFilePaths()
+   {
+      System.out.println("--- Absolute Paths ---");
+      for(String s : paths)
+         System.out.println(s);
+      notify();
+   }
+   
    public Vector<String> getPaths(){return this.paths;}
    public Vector<String> getFileNames(){return this.files;}
+   public Vector<String> getLibrary(){return this.lib_files;}
+   public Vector<String> getLibraryPaths(){return this.lib_paths;}
    
-   public synchronized void scan()
+   public synchronized void scan(BufferedReader in) throws IOException
    {
-      Scanner kb = new Scanner(System.in);
       String dir;
       files = new Vector<String>();
       paths = new Vector<String>();
@@ -108,10 +124,10 @@ public class SystemScanner
       System.out.println("Linux/UNIX: /path/to/dir");
       System.out.println("Type 'exit' to exit");
       System.out.print("$>: ");
-      dir = kb.nextLine();
+      dir = in.readLine();
+      System.out.println("Beginning scan...this may take a few minutes depending on directory size");
       search(dir, files, paths);
-      printFileNames(files);
-      kb.close();
+      System.out.println("Scan complete");
       notify();
    }
    

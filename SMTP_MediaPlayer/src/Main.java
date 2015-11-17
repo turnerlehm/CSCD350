@@ -5,8 +5,6 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import command.*;
-import console.*;
-import console.ui.ConsoleUI;
 
 class MediaFile{};//used for scan and add to playlist
 enum CommandType {OPEN_GROUP, PLAY_FILE, PLAY_GROUP};
@@ -19,7 +17,7 @@ public class Main
 	
 	private static ConsoleUI user_interface;
 	private static SystemScanner file_scanner;
-	private static AudioPlayer player;
+	private static Player audio_player;
 	private static Vector<String> found_media;
 	private static Vector<String> media_paths;
 
@@ -38,7 +36,7 @@ public class Main
 		
 		user_interface = ConsoleUI.getInstance();
 		file_scanner = SystemScanner.getInstance();
-		player = AudioPlayer.getInstance();
+		audio_player = Player.getInstance();
 		
 		CommandParser c = CommandParser.getInstance();
 		command.Command cmd = c.parseCommand("play -s stop");
@@ -48,17 +46,16 @@ public class Main
 		{
 			System.out.println(f._Flag + " " + f._Parameter);
 		}
-		displayMenu();
-		displayCommands();
-		System.out.println("--- Test scan for files ---");
-		scanFiles();
-		System.out.println("--- absolute paths to found files ---");
-		for(String path : file_scanner.getPaths())
-			System.out.println(path);
-		System.out.println("--- Now playing: Tender Love.mp3 ---");
-		player.playAudio("Tender Love.mp3");
-		//exit();
-		
+		CommandExecutionService ces = CommandExecutionService.getInstance();
+		user_interface.initInput();
+		user_interface.setScanner(file_scanner);
+		user_interface.setExecutor(ces);
+		user_interface.initScan();
+		System.out.println("--- Initial scan results ---");
+		file_scanner.printFileNames();
+		file_scanner.printFilePaths();
+		user_interface.initMenu();
+		user_interface.start();
 		
 		//while(currentCommand.compareTo("exit") != 0)
 		//{						
@@ -67,55 +64,6 @@ public class Main
         //exit();
 	}
 	
-	static void scanFiles()
-	{
-		file_scanner.scan();
-	}
-	static void displayMenu()
-	{
-		//show all menu options, with switch for submenus 
-		user_interface.initMenu();
-	}
-	static void displayCommands()
-	{
-		user_interface.commands();
-	}
-	
-	
-	static void processInput()
-	{
-		//interprets what the user typed in and runs commands if valid
-		Scanner reader = new Scanner(System.in);  // Reading from System.in
-		currentCommand = reader.nextLine();
-		//Command c = CommandParser.instance.parse(reader.nextLine());
-		
-		//This code is grrrrrooooooooooosssss and smelly
-		//Refactor into a CommandExecutor (Iteration 2)
-		//This will deprecate the command methods below and encapsulate them in a Singleton object
-		if(currentCommand.compareTo("open 1") == 0)//if c.commandType == OPEN_Group then openGroupCommand(c)
-		{
-			displayList(DB_Manager.getInstance().getAllMusic());			
-		}
-		else if(currentCommand.compareTo("open 2") == 0)
-		{
-			displayList(DB_Manager.getInstance().getArtists());
-		}
-		else if(currentCommand.compareTo("open 3") == 0)
-		{
-			displayList(DB_Manager.getInstance().getGenres());
-		}
-		else if(currentCommand.compareTo("open 4") == 0)
-		{
-			displayList(DB_Manager.getInstance().getPlaylists());
-		}
-		else if(currentCommand.compareTo("home") == 0)
-		{
-			displayMenu();
-		}
-		else if(currentCommand.compareTo("help") == 0)
-			displayCommands();
-		reader.close();	
-	}
 	static void playCommand()
 	{
 		
@@ -160,8 +108,10 @@ public class Main
 		//do any needed cleanup, database closings..
 		System.out.println("Closing program...");
 		System.out.println("Bye!");
+		user_interface.stop();
 		user_interface = null;
 		file_scanner = null;
+		audio_player = null;
 		DB_Manager.getInstance().shutdown();
 	}
 
