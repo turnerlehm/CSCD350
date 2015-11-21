@@ -17,7 +17,7 @@ public class Main
 	List<MediaFile> currentDisplay;//display numbered and grab by index. shows .ext. getInfo lets you see all file details 
 	static DB_Manager dbm;
 
-	public static void main(String[] args) throws InvalidCommandException 
+	public static void main(String[] args) 
 	{		
         //connectDatabase(); open a connection to the databse, check if it is empty.
 		//scanFiles();//if database is empty this will automatically be run on the current directory
@@ -74,14 +74,7 @@ public class Main
 		}		
 		
 		System.out.println("Enter ‘help’ for more commands");
-<<<<<<< HEAD
-=======
-		//playAudio("strobe", null);
-		playAudio("strobe", null);
 
-
-		playAudio("strobe", null);
->>>>>>> 8b0f659db1aa8027db6ef71be4eb7651858b54f1
 
 	}
 	void displayCommands()
