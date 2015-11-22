@@ -529,7 +529,7 @@ public class DB_Manager
     }
 
     /**
-     * Finds all music files found for specific filename which are attached to as pecific playlist
+     * Finds all music files with specific filename which are attached to a specific playlist
      * 
      * Returns full MediaFile object because path must be returned to check for duplicates
      * 
@@ -576,3 +576,25 @@ public class DB_Manager
         return list;
     }
 }
+/** Summary
+    static DB_Manager 		getInstance();    
+    void 					init();//call at start of main
+    void 					shutdown();//call at end of main
+    Vector<TempMediaFile> 	getAllMusic();//returns all music files in entire database
+    Vector<TempMediaFile> 	getGenres();//returns all genre names
+    Vector<TempMediaFile> 	getArtists();//returns all artist names
+    Vector<TempMediaFile> 	getPlaylists();//returns all playlist names
+    Vector<TempMediaFile> 	getGenre(String genreName);//returns all music files belonging to a specific genre
+    Vector<TempMediaFile> 	getArtist(String artistName);//returns all music files belonging to a specific artist
+    Vector<TempMediaFile> 	getPlaylist(String playlistName);//returns all music files belonging to a specific playlist
+    String 					getPath(int id);//retrieves the directory path of a music file by it's id    
+    int 					getPlaylistID(String playlistName);//retrieves the unique playlist_id by it's name
+	boolean 				deletePlaylist(int playlist_id);//Removes a playlist from the database
+	boolean 				createPlaylist(String playlistName);//Adds a new playlist to the database 
+    boolean 				addToPlaylist(int playlistId, int musicID);// Adds a music file to a playlist    
+    int 					addMedia(MediaFile media);//Adds a music file to the database
+    boolean 				deleteMediaFile(int musicId)//Removes a music file from the database
+    boolean 				removeFromPlaylist(int musicId, int playlistId);//Removes a specific file from a specific playlist
+    Vector<MediaFile> 		findAllFilesByName(String filename);//Finds all music files found for specific filename.
+    Vector<MediaFile> 		findInPlaylist(String playlistName, String musicName);//Finds all music files with specific filename which are attached to a specific playlist
+*/
