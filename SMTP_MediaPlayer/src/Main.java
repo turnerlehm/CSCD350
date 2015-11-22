@@ -15,7 +15,7 @@ public class Main
 	
 	List<MediaFile> currentDisplay;//display numbered and grab by index. shows .ext. getInfo lets you see all file details 
 	static DB_Manager dbm;
-
+	
 	public static void main(String[] args) 
 	{		
         //connectDatabase(); open a connection to the databse, check if it is empty.

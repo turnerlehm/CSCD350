@@ -8,19 +8,19 @@ public class MediaFile
     String artist;
     String directory;
     String genre;
-    int id;//used in rare case of checking duplicates and needing object with directory
+    int musicId;//used in rare case of checking duplicates and needing object with directory
     public MediaFile(String file_name, String extension, String path, String artist, String genre)
     {
     	this(file_name, extension, path, artist, genre, -1);
     }
-    public MediaFile(String file_name, String extension, String path, String artist, String genre, int music_id)
+    public MediaFile(String file_name, String extension, String directoryPath, String artist, String genre, int musicId)
     {
         filename = file_name;
         ext = extension;
-        directory = path;
+        directory = directoryPath;
         this.artist = artist;
         this.genre = genre;
-        id = music_id;
+        this.musicId = musicId;
     }
 
     public String getFilename()
@@ -43,14 +43,14 @@ public class MediaFile
         this.ext = ext;
     }
 
-    public int getId()
+    public int getMusicId()
     {
-        return id;
+        return musicId;
     }
 
     public void setId(int id)
     {
-        this.id = id;
+        this.musicId = id;
     }
 
     public String getArtist()

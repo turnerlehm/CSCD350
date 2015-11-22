@@ -7,7 +7,7 @@ import java.lang.Object;
 /**
  * Created by Sam Arutyunyan on 11/2/2015.
  */
-public class Utils //TODO how to prevent object of this type being made (static class?)
+public class Utils
 {
     public static ArrayList<MediaFile> getMediaFiles(String directoryName, boolean recursive, ArrayList<String> extensions)
     {
