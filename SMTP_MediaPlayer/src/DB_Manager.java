@@ -1,8 +1,10 @@
 //import javaFX.fxml.FXML;
 import javax.swing.*;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by Turtle on 11/3/2015.
@@ -45,17 +47,17 @@ public class DB_Manager
         }
     }
   //expecting to call from parameterless functions, no danger of SQL injection
-    private List<String> getList(String key, String table, String group)
+    private Vector<TempMediaFile> getList(String key, String table, String group)
     {
-        List<String> list = new ArrayList<String>();
+    	Vector<TempMediaFile> list = new Vector<TempMediaFile>();
         try
         {
             Statement st = c.createStatement();
-            ResultSet rs = st.executeQuery("SELECT " + key + " FROM " + table + " GROUP BY " + group + ";");
+            ResultSet rs = st.executeQuery("SELECT " + key + ", music_id FROM " + table + " GROUP BY " + group + ";");
             while (rs.next())
             {
                 String str = rs.getString(key);
-                list.add(str);
+                if(str != null) list.add(new TempMediaFile(str, rs.getInt("music_id")));
             }
         }
         catch (SQLException e)
@@ -64,56 +66,79 @@ public class DB_Manager
         }
         return list;
     }
-    List<String> getAllMusic()
+    Vector<TempMediaFile> getAllMusic()
     {
         return getList("filename", "music", "music_id");
     }
-    List<String> getGenres()
+    Vector<TempMediaFile> getGenres()
     {       
-        return getList("genre", "music", "genre");
+    	Vector<TempMediaFile> tmf = getList("genre", "music", "genre");
+    	for(TempMediaFile t : tmf)
+    	{
+    		t.db_id = -1;
+    	}
+    	return tmf;    	
     }
-    List<String> getArtists() 
+    Vector<TempMediaFile> getArtists() 
     {        
-        return getList("artist", "music", "artist");
+    	Vector<TempMediaFile> tmf =  getList("artist", "music", "artist");
+    	for(TempMediaFile t : tmf)
+    	{
+    		t.db_id = -1;
+    	}
+    	return tmf;
     }
-    List<String> getPlaylists() 
-    {  
-        return getList("playlist_name", "playlists", "playlist_id");
+    Vector<TempMediaFile> getPlaylists() 
+    {      	
+    	Vector<TempMediaFile> list = new Vector<TempMediaFile>();
+        try
+        {
+            Statement st = c.createStatement();
+            ResultSet rs = st.executeQuery("SELECT playlist_name FROM playlists GROUP BY playlist_id;");
+            while (rs.next())
+            {
+                String str = rs.getString("playlist_name");
+                if(str != null) list.add(new TempMediaFile(str, -1));
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return list;
     }  
 
-    private List<String> getSpecificList(String group, String name) 
+    private Vector<TempMediaFile> getSpecificList(String group, String name) //TODO code in here should be sql injection safe
     {
-        List<String> artistMusic = null;
-        try {
-            artistMusic = new ArrayList<String>();
-            PreparedStatement stmt = c.prepareStatement("SELECT filename FROM music WHERE lower(" + group + ") = '" + name.toLowerCase() + "';");
+    	Vector<TempMediaFile> artistMusic = new Vector<TempMediaFile>();
+        try 
+        {           
+            PreparedStatement stmt = c.prepareStatement("SELECT filename, music_id FROM music WHERE lower(" + group + ") = '" + name.toLowerCase() + "';");
             ResultSet rs = stmt.executeQuery();
 
             // Fetch each row from the result set
             while (rs.next()) {
                 String str = rs.getString("filename");
-
-                artistMusic.add(str);
+                if(str != null) artistMusic.add(new TempMediaFile(str, rs.getInt("music_id")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return artistMusic;
     }
-    List<String> getGenre(String genreName) 
+    Vector<TempMediaFile> getGenre(String genreName) 
     {
         return getSpecificList("genre", genreName);
     }
     
-    List<String> getArtist(String artistName) 
+    Vector<TempMediaFile> getArtist(String artistName) 
     {  
         return getSpecificList("artist", artistName);
     }
     
-    List<String> getPlaylist(String playlistName)
+    Vector<TempMediaFile> getPlaylist(String playlistName)
     {
-
-        List<String> playlistMusic = new ArrayList<String>();
+    	Vector<TempMediaFile> playlistMusic = new Vector<TempMediaFile>();
         Statement st = null;
         try
         {
@@ -132,7 +157,7 @@ public class DB_Manager
                 ResultSet rs2 = st2.executeQuery("SELECT filename FROM music WHERE music_id = " + curID + ";");
                 rs2.next();
                 String str = rs2.getString("filename");
-                playlistMusic.add(str);
+                if(str != null) playlistMusic.add(new TempMediaFile(str, curID));
             }
             st.close();
         } catch (SQLException e)
@@ -143,7 +168,8 @@ public class DB_Manager
         return playlistMusic;
     }
     
-    String getPath(String fileName)
+    //the id of the file should be retrieved via TempMediaFile.db_id from findAllFilesByName(string filename);
+    String getPath(int id)//TODO this should return a list of all files found with same name
     {
     	 String path = "";
     	 
@@ -151,7 +177,7 @@ public class DB_Manager
          try
          {
              st = c.createStatement();
-             ResultSet rs = st.executeQuery("SELECT directory_path FROM music WHERE lower(filename) = '" + fileName.toLowerCase() + "';");
+             ResultSet rs = st.executeQuery("SELECT directory_path FROM music WHERE music_id = " + id + ";");
 
              rs.next();
              
@@ -165,17 +191,42 @@ public class DB_Manager
 
          return path;
     }
-    int getPlaylistID(String playlistName)//TODO implement
+    int getPlaylistID(String playlistName)
 	{
-		return -1;
+    	int id = -1;
+        try 
+        {           
+            PreparedStatement stmt = c.prepareStatement("SELECT playlist_id FROM playlists WHERE playlist_name = '" + playlistName + "';");
+            ResultSet rs = stmt.executeQuery();
+
+            // Fetch each row from the result set
+            rs.next();
+            id = rs.getInt("playlist_id");          
+            
+        }
+        catch (SQLException e) 
+        {
+            e.printStackTrace();
+        }
+        return id;
 	}
 	
-	boolean deletePlaylist(String playlistName)//TODO implement
-	{
-		
-		return true;		
+	boolean deletePlaylist(int playlist_id)
+	{		
+		try
+        {
+            PreparedStatement st = c.prepareStatement("DELETE FROM music WHERE music_id = " + playlist_id + ";");
+            st.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    	breakConnections("playlist_id", playlist_id);
+    	return true;
 	}
-	boolean createPlaylist(String playlistName)//TODO implement
+	boolean createPlaylist(String playlistName)
     {
         try
         {
@@ -249,5 +300,111 @@ public class DB_Manager
             e.printStackTrace();
             return -1;
         }
+    }
+    boolean deleteMediaFile(int music_id)
+    {
+    	try
+        {
+            PreparedStatement st = c.prepareStatement("DELETE FROM music WHERE music_id = " + music_id + ";");
+            st.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    	breakConnections("music_id", music_id);
+    	return true;
+    }
+    //removes entry for all playlist_connections to this music id.
+    //should be called right after deleteMediaFile()
+    private boolean breakConnections(String key, int id)
+    {
+    	try
+        {
+            PreparedStatement st = c.prepareStatement("DELETE FROM playlist_connections WHERE " + key + " = " + id + ";");
+            st.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    	return true;
+    }
+    boolean removeFromPlaylist(int music_id, int playlist_id)
+    {    	
+    	try
+        {
+            PreparedStatement st = c.prepareStatement("DELETE FROM playlist_connections WHERE music_id = " + music_id + " AND playlist_id = " + playlist_id + ";");
+            st.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    	return true;
+    }
+    //returns full MediaFile object because path must be returned to check for duplicates
+    Vector<MediaFile> findAllFilesByName(String filename)
+    {    	
+    	Vector<MediaFile> list = new Vector<MediaFile>();
+        try
+        {
+            Statement st = c.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM music WHERE filename = '" + filename + "';");
+            while (rs.next())
+            {
+                String str = rs.getString("filename");
+                if(str != null)
+                	{
+                		list.add(new MediaFile(str, rs.getString("extension"), rs.getString("directory_path"), 
+                				rs.getString("artist"), rs.getString("genre"), rs.getInt("music_id")));
+                	}
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    //meant to be used with delete command to check for duplicates 
+    //delete music1 -p workout; if music1 has duplicate entries further prompts
+    Vector<MediaFile> findInPlaylist(String playlistName, String musicName)
+    {
+    	Vector<MediaFile> list = new Vector<MediaFile>();
+        Statement st = null;
+        try
+        {
+            st = c.createStatement();
+            ResultSet rs = st.executeQuery("SELECT playlist_id FROM playlists WHERE lower(playlist_name) = '" + playlistName.toLowerCase() + "';");
+
+            rs.next();
+            int id = rs.getInt("playlist_id");//return single playlist id
+
+            rs = st.executeQuery("SELECT music_id FROM playlist_connections WHERE playlist_id = " + id + ";");
+
+            while (rs.next())
+            {
+                int curID = rs.getInt("music_id");
+                Statement st2 = c.createStatement();
+                ResultSet rs2 = st2.executeQuery("SELECT filename FROM music WHERE music_id = " + curID + " AND filename = '" + musicName + "';");
+                rs2.next();
+                String str = rs2.getString("filename");
+                if(str != null)
+            	{
+            		list.add(new MediaFile(str, rs.getString("extension"), rs.getString("directory_path"), 
+            				rs.getString("artist"), rs.getString("genre"), rs.getInt("music_id")));
+            	}
+            }
+            st.close();
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }
