@@ -2,11 +2,11 @@ package command.commands;
 
 import command.*;
 
-public class CommandOpen extends AbstractCommand implements Command
+public class CommandScan extends AbstractCommand implements Command
 {	
-	private FLAG_TYPE[] Allowed_Flags = new FLAG_TYPE[]{FLAG_TYPE.PLAYLIST, FLAG_TYPE.ARTIST, FLAG_TYPE.GENRE, FLAG_TYPE.NOFLAG};
+	private FLAG_TYPE[] Allowed_Flags = new FLAG_TYPE[]{FLAG_TYPE.DIRECTORY};
 	
-	public CommandOpen()
+	public CommandScan()
 	{
 		super(COMMAND_TYPE.OPEN);
 	}

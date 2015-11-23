@@ -57,7 +57,7 @@ public class CommandParserTest
 		
 		try
 		{
-			//expected result: Exception to be thrown
+			//expected result: Exception to be thrown, command not valid
 			cs = "-a Open stop play";
 			cmd = parser.parseCommand(cs);
 		}
@@ -68,7 +68,78 @@ public class CommandParserTest
 		
 		try
 		{
-			//expected result: Exception to be thrown, because there's is no argument for -a flag
+			//expected result: Exception to be thrown, command not valid
+			cs = "Open";
+			cmd = parser.parseCommand(cs);
+		}
+		catch(Exception e)
+		{
+			assert(true);
+		}
+		
+		try
+		{
+			//expected result: Exception to be thrown, command not valid
+			cs = "help";
+			cmd = parser.parseCommand(cs);
+			assertEquals(COMMAND_TYPE.HELP, cmd.getType());
+			assertEquals(0, cmd.getFlags().size());
+			
+		}
+		catch(Exception e)
+		{
+			fail();
+		}
+		
+		try
+		{
+			//expected result: Exception to be thrown
+			cs = "seek -ms 100";
+			cmd = parser.parseCommand(cs);
+			assertEquals(FLAG_TYPE.MILISECONDS, cmd.getFlags().get(0)._Flag);
+			assertTrue(cmd.getFlags().get(0)._Parameter.equals("100"));
+		}
+		catch(Exception e)
+		{
+			fail();
+		}
+		
+		try
+		{
+			//expected result: Exception to be thrown, command not valid
+			cs = "seek -ms 100a";
+			cmd = parser.parseCommand(cs);
+		}
+		catch(Exception e)
+		{
+			assert(true);
+		}
+		
+		try
+		{
+			//expected result: Exception to be thrown, command not valid
+			cs = "seek -ms";
+			cmd = parser.parseCommand(cs);
+		}
+		catch(Exception e)
+		{
+			assert(true);
+		}
+		
+		try
+		{
+			//expected result: Exception to be thrown, command not valid
+			cs = "seek -ms 100 -s play it again";
+			cmd = parser.parseCommand(cs);
+		}
+		catch(Exception e)
+		{
+			assert(true);
+		}
+		
+		try
+		{
+			//expected result: Exception to be thrown, command not valid
 			cs = "play -a -s stop play";
 			cmd = parser.parseCommand(cs);
 		}

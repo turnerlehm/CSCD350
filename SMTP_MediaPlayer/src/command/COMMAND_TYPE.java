@@ -10,5 +10,7 @@ public enum COMMAND_TYPE
 	STOP,
 	NEXT,
 	PREVIOUS,
-	SEEK
+	SEEK,
+	SCAN,
+	NOTVALID
 }
