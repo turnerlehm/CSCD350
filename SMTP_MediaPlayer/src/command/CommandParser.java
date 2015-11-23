@@ -46,6 +46,15 @@ public class CommandParser
     	 	 		break;
     	 	 	case NEXT:
     	 	 		return new CommandNext();
+    	 	 	case ADD:
+    	 	 		cmd = new CommandAdd();
+    	 	 		break;
+    	 	 	case CREATE:
+    	 	 		cmd = new CommandCreate();
+    	 	 		break;
+    	 	 	case DELETE:
+    	 	 		cmd = new CommandDelete();
+    	 	 		break;
     	 	 	case OPEN:
     	 	 		cmd = new CommandOpen();
     	 	 		break;
@@ -163,6 +172,18 @@ public class CommandParser
   	   {
 		   return COMMAND_TYPE.PLAY;
        }
+	   else if(command.equals("add"))
+	   {
+		   return COMMAND_TYPE.ADD;
+	   }
+	   else if(command.equals("create"))
+	   {
+		   return COMMAND_TYPE.CREATE;
+	   }
+	   else if(command.equals("delete"))
+	   {
+		   return COMMAND_TYPE.DELETE;
+	   }
   	   else if(command.equals("pause"))
   	   {
   		   return COMMAND_TYPE.PAUSE;
