@@ -1,14 +1,15 @@
-package command;
+package command.commands;
 
+import command.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Command
+public abstract class AbstractCommand implements Command
 {
 	public final COMMAND_TYPE _Command_Type;
 	private List<Flag> _Flags;
 	
-	public Command(COMMAND_TYPE type)
+	protected AbstractCommand(COMMAND_TYPE type)
 	{
 		_Command_Type = type;
 		_Flags = new ArrayList<Flag>();
@@ -26,5 +27,10 @@ public class Command
 	public List<Flag> getFlags()
 	{
 		return _Flags;
+	}
+	
+	public COMMAND_TYPE getType()
+	{
+		return _Command_Type;
 	}
 }

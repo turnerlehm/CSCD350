@@ -1,5 +1,7 @@
 package command;
 
+import command.commands.*;
+
 public class CommandParser
 {
    private static CommandParser instance = null;
@@ -27,27 +29,39 @@ public class CommandParser
       {
     	 if((tokens[x].equals("play") || tokens[x].equals("PLAY") || tokens[x].equals("Play")) && x == 0)
     	 {
-        	 cmd = new Command(COMMAND_TYPE.PLAY);     
+        	 cmd = new CommandPlay();
          }
     	 else if((tokens[x].equals("pause") || tokens[x].equals("Pause") || tokens[x].equals("PAUSE")) && x == 0)
     	 {
-        	 return new Command(COMMAND_TYPE.PAUSE);     
+        	 return new CommandPause();     
          }
     	 else if((tokens[x].equals("stop") || tokens[x].equals("Stop") || tokens[x].equals("STOP")) && x == 0)
     	 {
-        	 return new Command(COMMAND_TYPE.STOP);     
+        	 return new CommandStop();     
+         }
+    	 else if((tokens[x].equals("next") || tokens[x].equals("Next") || tokens[x].equals("NEXT")) && x == 0)
+    	 {
+        	 return new CommandNext();     
+         }
+    	 else if((tokens[x].equals("previous") || tokens[x].equals("Previous") || tokens[x].equals("PREVIOUS")) && x == 0)
+    	 {
+        	 return new CommandPrevious();     
+         }
+    	 else if((tokens[x].equals("seek") || tokens[x].equals("Seek") || tokens[x].equals("SEEK")) && x == 0)
+    	 {
+        	 cmd = new CommandSeek();     
          }
     	 else if((tokens[x].equals("open") || tokens[x].equals("OPEN") || tokens[x].equals("Open")) && x == 0)
     	 {
-        	 cmd = new Command(COMMAND_TYPE.OPEN);     
+        	 cmd = new CommandOpen();     
          }
     	 else if((tokens[x].equals("exit") || tokens[x].equals("EXIT") || tokens[x].equals("Exit") ) && x == 0)
     	 {
-        	 return cmd = new Command(COMMAND_TYPE.EXIT);     
+        	 return cmd = new CommandExit();     
          }
     	 else if((tokens[x].equals("help") || tokens[x].equals("Help") || tokens[x].equals("HELP") ) && x == 0)
     	 {
-        	 return cmd = new Command(COMMAND_TYPE.HELP);     
+        	 cmd = new CommandHelp();     
          }
     	 else if(x != 0 && cmd != null)
     	 {

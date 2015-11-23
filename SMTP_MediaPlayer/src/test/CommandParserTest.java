@@ -1,6 +1,7 @@
 package test;
 
 import command.*;
+import command.commands.*;
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +33,7 @@ public class CommandParserTest
 			//expected result: Command with type pause with no flags or parameters set
 			cs = "pause and some random bull";
 			cmd = parser.parseCommand(cs);
-			assertEquals(COMMAND_TYPE.PAUSE, cmd._Command_Type);
+			assertEquals(COMMAND_TYPE.PAUSE, cmd.getType());
 			assertEquals(0, cmd.getFlags().size());
 		}
 		catch(Exception e)
@@ -45,7 +46,7 @@ public class CommandParserTest
 			//expected result: Command with type open with a default NOFLAG and parameter play stop
 			cs = "Open stop play";
 			cmd = parser.parseCommand(cs);
-			assertEquals(COMMAND_TYPE.OPEN, cmd._Command_Type);
+			assertEquals(COMMAND_TYPE.OPEN, cmd.getType());
 			assertEquals(1, cmd.getFlags().size());
 			assertTrue(cmd.getFlags().get(0)._Parameter.equals("stop play"));
 		}
@@ -81,7 +82,7 @@ public class CommandParserTest
 			//expected result: play command with 2 flags, artist and song, artist Luke Bryan, song play it again
 			cs = "play -a Luke Bryan -s play it again";
 			cmd = parser.parseCommand(cs);
-			assertEquals(COMMAND_TYPE.PLAY, cmd._Command_Type);
+			assertEquals(COMMAND_TYPE.PLAY, cmd.getType());
 			assertEquals(2, cmd.getFlags().size());
 			assertEquals(FLAG_TYPE.ARTIST, cmd.getFlags().get(0)._Flag);
 			assertTrue(cmd.getFlags().get(0)._Parameter.equals("Luke Bryan"));

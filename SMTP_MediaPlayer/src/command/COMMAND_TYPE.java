@@ -8,4 +8,7 @@ public enum COMMAND_TYPE
 	HELP,
 	PAUSE,
 	STOP,
+	NEXT,
+	PREVIOUS,
+	SEEK
 }
