@@ -54,6 +54,9 @@ public class Main
 		file_scanner.printFilePaths();
 		user_interface.initMenu();
 		user_interface.start();
+		audio_player.createPlaylist(file_scanner.getLibraryPaths());
+		audio_player.startPlaying();
+		audio_player.playPlaylist();
 		
 		//while(currentCommand.compareTo("exit") != 0)
 		//{						
@@ -91,10 +94,7 @@ public class Main
 		//self explanatory?
 		return "";
 	}
-	static void playAudio(String fileName)
-	{
-		DB_Manager.getInstance().getPath(fileName);
-	}
+	
 	static void exit()
 	{
 		//'exit' command closes program
