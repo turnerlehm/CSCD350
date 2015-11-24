@@ -2,10 +2,18 @@ package command;
 
 public enum COMMAND_TYPE
 {
-	OPEN,
+	ADD,
+	CREATE,
+	DELETE,
 	EXIT,
-	PLAY,
 	HELP,
+	NEXT,
+	NOTVALID,
+	OPEN,
 	PAUSE,
-	STOP,
+	PLAY,
+	PREVIOUS,
+	SEEK,
+	SCAN,
+	STOP
 }
