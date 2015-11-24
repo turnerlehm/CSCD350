@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SMTP_MediaPlayer</name>
+	<name>SMTPlayer</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,4 +14,24 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1447133074947</id>
+			<name></name>
+			<type>30</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-projectRelativePath-matches-false-false-.\src\test media</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1447133074951</id>
+			<name></name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-Medasin - GOLD</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>

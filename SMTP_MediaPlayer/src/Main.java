@@ -2,20 +2,27 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import command.*;
+import java.util.Vector;
 
-
+<<<<<<< HEAD
 enum CommandType {OPEN_GROUP, PLAY_FILE, PLAY_GROUP};
 class Command{ int commandType; String filename; }; 
+=======
+import command.*;
+import command.commands.AbstractCommand;
+ 
+>>>>>>> refs/remotes/origin/master
 public class Main 
 {
 	//List<String> allPlaylists;//just use the names of the playlist to load temporary lists?
 	//List<MediaFile> allFiles;//all the files in the database. we need to create MediaFile object
 	static String currentCommand = "";
-	static String [] menuItems = {"1. Music", "2. Artist", "3. Genre", "4. Playlists"};
-
-	List<MediaFile> currentDisplay;//display numbered and grab by index. shows .ext. getInfo lets you see all file details 
-	static DB_Manager dbm;
+	
+	private static ConsoleUI user_interface;
+	private static SystemScanner file_scanner;
+	private static Player audio_player;
+	private static Vector<String> found_media;
+	private static Vector<String> media_paths;
 
 	public static void main(String[] args) throws InvalidCommandException 
 	{		
@@ -25,24 +32,45 @@ public class Main
         //read database: scan through the tables in the database and create a list in memory for all the data 
         //(the groups, the playlists, etc) after this scan, the only time database should be accessed is to add or delete
 		//main loop:
-
-		dbm = DB_Manager.getInstance();
-		dbm.init();
-		displayMenu();
-		while(currentCommand.compareTo("exit") != 0)
-		{						
-			processInput();
+		
+		//We need to seriously refactor this stuff and place all command execution in a separate object
+		//the lists should not be static as they will changed CONSTANTLY
+		//This is just a complete mess!
+		
+		user_interface = ConsoleUI.getInstance();
+		file_scanner = SystemScanner.getInstance();
+		audio_player = Player.getInstance();
+		
+		CommandParser c = CommandParser.getInstance();
+		AbstractCommand cmd = c.parseCommand("play -s stop");
+		System.out.println(cmd._Command_Type);
+		List<Flag> flags = cmd.getFlags();
+		for(Flag f: flags)
+		{
+			System.out.println(f._Flag + " " + f._Parameter);
 		}
-        exit();
+		CommandExecutionService ces = CommandExecutionService.getInstance();
+		user_interface.initInput();
+		user_interface.setScanner(file_scanner);
+		user_interface.setExecutor(ces);
+		user_interface.initScan();
+		System.out.println("--- Initial scan results ---");
+		file_scanner.printFileNames();
+		file_scanner.printFilePaths();
+		user_interface.initMenu();
+		user_interface.start();
+		audio_player.createPlaylist(file_scanner.getLibraryPaths());
+		audio_player.startPlaying();
+		audio_player.playPlaylist();
 		
 		//while(currentCommand.compareTo("exit") != 0)
 		//{						
 		//	processInput();
 		//}
         //exit();
-
 	}
 	
+<<<<<<< HEAD
 	void scanFiles()
 	{
 		//scan specified directory and add all media files of specified extension to a local list.		
@@ -128,6 +156,8 @@ public class Main
 		}
 			
 	}
+=======
+>>>>>>> refs/remotes/origin/master
 	static void playCommand()
 	{
 		
@@ -137,12 +167,6 @@ public class Main
 	}
 	static void openGroupCommand()
 	{
-		//scan()
-		//select from list, add selected to new or default playlist
-		//for each item selected, add file to DB. 
-		//if playlistName specified, add all to playlist (by looking at database names)
-		//>DB.addFile(filename) returns the int id or -1 if failed
-		//DB.addToPlaylist(playlistName, int fileID)//this forces users to confirm first the file is in the db
 		
 	}
 	static void displayList(List<String> list)
@@ -156,59 +180,24 @@ public class Main
 	static void createPlaylist(String playlistName)
 	{
 		//adds a list to current List<Playlist> and also to the database using specified file objects
-		if(dbm.getPlaylistID(playlistName) != -1)
-		{
-			
-		}
-		dbm.createPlaylist(playlistName);
-	}
-	static void deletePlaylist(String playlistName)
-	{
-		dbm.deletePlaylist(playlistName);
 		DB_Manager.getInstance().createPlaylist(playlistName);
 	}
-	static void addToPlaylist(String playlistName, List<MediaFile> files)
-	{
-		//this would probably be part of 'add' command run after a directory scan
-		int pid = 0;//TODO retrieve playlist id by making sure it exists first
-		dbm.addToPlaylist(pid, files);
-	}	
-	static void addFile(MediaFile file)
-	{
-		//puts file in database wihtout adding it to any playlist. will be part of "default" playlist
-		
-	}
-	static void playAudio(String fileName, String ext)//TODO should prol play by id ratehr than filename, easier to delete right thing
-	{		
-		String path = dbm.getPath(fileName);
-		if(path == null)
-		{
-			System.out.println("file not found on disk. Removing from Database...");
-			//TODO go into database and remove the file
-		}
-		else
-		{
-			System.out.println("playing audio file: " + path + "/" + fileName);
-		}
-		
-		//to be able to say 'play strobe; play strobe.mp3' we'll probably need playAudio to take fileName And extension. 
-		//the command parser will need to separate these so that ext is null and dbm will ignore it if it is
-		//DB_Manager.getInstance().addToPlaylist(playlistName, files);
-	}
-	static void parseCommand(String command)
+	static String parseCommand(String command)
 	{
 		//self explanatory?
+		return "";
 	}
-	static void playAudio(String fileName)
-	{
-		DB_Manager.getInstance().getPath(fileName);
-	}
+	
 	static void exit()
 	{
 		//'exit' command closes program
 		//do any needed cleanup, database closings..
-		System.out.println("Closing program, goodbye!");
-		dbm.shutdown();
+		System.out.println("Closing program...");
+		System.out.println("Bye!");
+		user_interface.stop();
+		user_interface = null;
+		file_scanner = null;
+		audio_player = null;
 		DB_Manager.getInstance().shutdown();
 	}
 

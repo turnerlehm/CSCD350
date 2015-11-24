@@ -20,9 +20,9 @@ public class CommandParser
       return instance;
    }
    
-   public Command parseCommand(String commandToParse) throws InvalidCommandException
+   public AbstractCommand parseCommand(String commandToParse) throws InvalidCommandException
    {
-      Command cmd = null;
+      AbstractCommand cmd = null;
       String parameter = "";
       String p;
       String[] tokens = commandToParse.split(" ");
@@ -36,7 +36,11 @@ public class CommandParser
     		 switch(command)
     		 {
     	 	 	case EXIT:
+<<<<<<< HEAD
     	 	 		return cmd = new CommandExit();
+=======
+    	 	 		cmd = new CommandExit();
+>>>>>>> refs/remotes/origin/master
     	 	 	case HELP:
     	 	 		cmd = new CommandHelp();
     	        	 if(tokens.length == 1)
@@ -45,7 +49,11 @@ public class CommandParser
     	        	 }
     	 	 		break;
     	 	 	case NEXT:
+<<<<<<< HEAD
     	 	 		return new CommandNext();
+=======
+    	 	 		cmd =  new CommandNext();
+>>>>>>> refs/remotes/origin/master
     	 	 	case ADD:
     	 	 		cmd = new CommandAdd();
     	 	 		break;
@@ -59,12 +67,20 @@ public class CommandParser
     	 	 		cmd = new CommandOpen();
     	 	 		break;
     	 	 	case PAUSE:
+<<<<<<< HEAD
     	 	 		return new CommandPause();
+=======
+    	 	 		cmd = new CommandPause();
+>>>>>>> refs/remotes/origin/master
     	 	 	case PLAY:
     	 	 		cmd = new CommandPlay();
     	 	 		break;
     	 	 	case PREVIOUS:
+<<<<<<< HEAD
     	 	 		return new CommandPrevious();
+=======
+    	 	 		cmd = new CommandPrevious();
+>>>>>>> refs/remotes/origin/master
     	 	 	case SCAN:
     	 	 		cmd = new CommandScan();
     	 	 		cmd.addFlag(new Flag(FLAG_TYPE.DIRECTORY, parseParameter(x,tokens)));
@@ -73,7 +89,11 @@ public class CommandParser
     	 	 		cmd = new CommandSeek();
     	 	 		break;
     	 	 	case STOP:
+<<<<<<< HEAD
     	 	 		return new CommandStop();
+=======
+    	 	 		cmd = new CommandStop();
+>>>>>>> refs/remotes/origin/master
     		 }
     	 }
     	 else if(x != 0 && cmd != null)
