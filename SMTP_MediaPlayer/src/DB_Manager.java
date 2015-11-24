@@ -232,8 +232,5 @@ public class DB_Manager
 		
 		return true;		
 	}
-	void addToPlaylist(String playlist_id, List<MediaFile> files)
-	{
-
-	}
+	
 }
