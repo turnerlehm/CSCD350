@@ -5,10 +5,8 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import command.*;
-
-class MediaFile{};//used for scan and add to playlist
-enum CommandType {OPEN_GROUP, PLAY_FILE, PLAY_GROUP};
-class Command{ int commandType; String filename; }; 
+import command.commands.AbstractCommand;
+ 
 public class Main 
 {
 	//List<String> allPlaylists;//just use the names of the playlist to load temporary lists?
@@ -39,7 +37,7 @@ public class Main
 		audio_player = Player.getInstance();
 		
 		CommandParser c = CommandParser.getInstance();
-		command.Command cmd = c.parseCommand("play -s stop");
+		AbstractCommand cmd = c.parseCommand("play -s stop");
 		System.out.println(cmd._Command_Type);
 		List<Flag> flags = cmd.getFlags();
 		for(Flag f: flags)
@@ -87,11 +85,6 @@ public class Main
 	{
 		//adds a list to current List<Playlist> and also to the database using specified file objects
 		DB_Manager.getInstance().createPlaylist(playlistName);
-	}
-	static void addToPlaylist(String playlistName, List<MediaFile> files)
-	{
-		//this would probably be part of 'add' command run after a directory scan
-		DB_Manager.getInstance().addToPlaylist(playlistName, files);
 	}
 	static String parseCommand(String command)
 	{
