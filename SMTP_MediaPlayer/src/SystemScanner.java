@@ -1,5 +1,10 @@
 
 import java.util.*;
+
+import javafx.collections.MapChangeListener;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import java.io.*;
 
 /*
@@ -27,8 +32,9 @@ public class SystemScanner
    private Vector<String> paths;
    private Vector<String> lib_files = new Vector<String>();
    private Vector<String> lib_paths = new Vector<String>();
-   private Vector<String> cur_plist;
-   private Vector<String> cur_plist_paths;
+   private volatile DB_Manager dbm;
+   private volatile String artist;
+   private volatile String genre;
    
    private SystemScanner(){}
    
@@ -45,7 +51,13 @@ public class SystemScanner
       return instance;
    }
    
-   public synchronized void search(String directory, Vector<String> file_list, Vector<String> file_paths)
+   public void setDBM(DB_Manager d)
+   {
+	   if(d != null)
+		   this.dbm = d;
+   }
+   
+   private synchronized void search(String directory, Vector<String> file_list, Vector<String> file_paths)
    {
       if(directory.equalsIgnoreCase("exit"))
       {
@@ -129,6 +141,33 @@ public class SystemScanner
       search(dir, files, paths);
       System.out.println("Scan complete");
       notify();
+   }
+   
+   private synchronized void addToDB()
+   {
+	   if(dbm != null)
+	   {
+		   new javafx.embed.swing.JFXPanel();
+		   for(int i = 0; i < files.size(); i++)
+		   {
+			   artist = "";
+			   genre = "";
+			   MediaPlayer temp = new MediaPlayer(new Media(paths.get(i)));
+			   temp.getMedia().getMetadata().addListener(new MapChangeListener<String, Object>(){
+				   public void onChanged(Change<? extends String, ? extends Object> ch)
+				   {
+					   if(ch.getKey().equals("artist"))
+						   artist = ch.getValueAdded().toString();
+					   if(ch.getKey().equals("genre"))
+						   genre = ch.getValueAdded().toString();
+				   }
+			   });
+			   String fname = files.get(i).substring(0, files.get(i).lastIndexOf('.'));
+			   String ext = files.get(i).substring(files.get(i).lastIndexOf('.') + 1);
+			   String dir = paths.get(i);
+			   dbm.addMedia(new MediaFile(fname, ext, dir, artist, genre));
+		   }
+	   }
    }
    
    //sanity check
