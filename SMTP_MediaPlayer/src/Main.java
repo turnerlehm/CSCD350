@@ -27,8 +27,9 @@ public class Main
 
 		dbm = DB_Manager.getInstance();
 		dbm.init();		
+		displayTest();
 		displayMenu();		
-		//displayTest();
+		
 		while(currentCommand.compareTo("exit") != 0)
 		{						
 			processInput();
@@ -44,18 +45,7 @@ public class Main
 	}
 	
 	static void displayTest()
-	{					
-		Scanner reader = new Scanner(System.in); 
-		reader.nextLine();					//play
-		System.out.println("Results for C:/apps/SMTPlayer");
-		System.out.println("1. music1.mp3");
-		System.out.println("2. music2.mp3");
-		System.out.println("3. music3.mp3");
-		System.out.println("Add files to playlist? (y/n)");
-		reader.nextLine();					//y
-		System.out.println("enter new or existing playlist name");
-		reader.nextLine();					//coolmusic
-		System.out.println("Scanned files added to newly created playlist: coolmusic");		
+	{	
 	}
 	void scanFiles()
 	{
@@ -114,7 +104,7 @@ public class Main
 	{		
 		for(TempMediaFile t : list)
 		{
-			System.out.println(t.filename + ", id: " + t.db_id);
+			System.out.println(t.filename + ", id: " + t.musicId);
 		}
 	}	
 	static void exit()

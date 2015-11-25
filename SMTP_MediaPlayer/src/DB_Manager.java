@@ -89,6 +89,8 @@ public class DB_Manager
                 String str = rs.getString(key);
                 if(str != null) list.add(new TempMediaFile(str, rs.getInt("music_id")));
             }
+            rs.close();
+            st.close();
         }
         catch (SQLException e)
         {
@@ -154,6 +156,8 @@ public class DB_Manager
                 String str = rs.getString("playlist_name");
                 if(str != null) list.add(new TempMediaFile(str, -1));
             }
+            rs.close();
+            st.close();
         }
         catch (SQLException e)
         {
@@ -177,9 +181,9 @@ public class DB_Manager
     	Vector<TempMediaFile> artistMusic = new Vector<TempMediaFile>();
         try 
         {           
-            PreparedStatement st = c.prepareStatement("SELECT filename, music_id FROM music WHERE lower(?) = '?';");
-            st.setString(1, group);
-            st.setString(2, name.toLowerCase());
+            //PreparedStatement st = c.prepareStatement("SELECT filename, music_id FROM music WHERE lower(?) = ?;");
+            PreparedStatement st = c.prepareStatement("SELECT filename, music_id FROM music WHERE " + group + " = ?;");            
+            st.setString(1, name.toLowerCase());
             ResultSet rs = st.executeQuery();
             
             // Fetch each row from the result set
@@ -188,6 +192,8 @@ public class DB_Manager
                 String str = rs.getString("filename");
                 if(str != null) artistMusic.add(new TempMediaFile(str, rs.getInt("music_id")));
             }
+            rs.close();
+            st.close();
         } 
         catch (SQLException e) 
         {
@@ -229,26 +235,32 @@ public class DB_Manager
     {
     	Vector<TempMediaFile> playlistMusic = new Vector<TempMediaFile>();        
 		try
-		{
-			PreparedStatement st = c.prepareStatement("SELECT playlist_id FROM playlists WHERE lower(playlist_name) = '?';");
-		    st.setString(1, playlistName.toLowerCase());
-		    ResultSet rs = st.executeQuery();
-		    		    
-		    rs.next();		    
-		    int id = rs.getInt("playlist_id");
-		
-		    rs = st.executeQuery("SELECT music_id FROM playlist_connections WHERE playlist_id = " + id + ";");
-		
-		    while (rs.next())
+		{		    
+		    int id = getPlaylistID(playlistName);
+		    if(id > -1)
 		    {
-		        int curID = rs.getInt("music_id");
-		        Statement st2 = c.createStatement();
-		        ResultSet rs2 = st2.executeQuery("SELECT filename FROM music WHERE music_id = " + curID + ";");
-		        rs2.next();
-		        String str = rs2.getString("filename");
-		        if(str != null) playlistMusic.add(new TempMediaFile(str, curID));
-		    }
-		    st.close();
+		    	Statement st = c.createStatement();
+			    ResultSet rs = st.executeQuery("SELECT music_id FROM playlist_connections WHERE playlist_id = " + id + ";");
+			    if(rs.isBeforeFirst())
+			    {
+			    	while (rs.next())
+				    {
+				        int curID = rs.getInt("music_id");
+				        Statement st2 = c.createStatement();
+				        ResultSet rs2 = st2.executeQuery("SELECT filename FROM music WHERE music_id = " + curID + ";");
+				        rs2.next();
+				        String str = rs2.getString("filename");
+				        if(str != null) 
+			        	{
+			        		playlistMusic.add(new TempMediaFile(str, curID));
+			        	}
+				        rs2.close();
+				        st2.close();
+				    }
+			    	rs.close();
+				    st.close();
+			    }			    
+		    }		    
 		} 
         catch (SQLException e)
         {
@@ -278,8 +290,12 @@ public class DB_Manager
 
              rs.next();             
              path = rs.getString("directory_path");
-             if(path == "" || path == null) path = null;
-             st.close();
+             if(path == "" || path == null)
+        	 {
+        	 	path = null;
+        	 }
+             rs.close();
+             st.close();             
          } catch (SQLException e)
          {
              e.printStackTrace();
@@ -300,13 +316,17 @@ public class DB_Manager
     	int id = -1;
         try 
         {           
-            PreparedStatement st = c.prepareStatement("SELECT playlist_id FROM playlists WHERE playlist_name = '?';");
-            st.setString(1, playlistName);
+            PreparedStatement st = c.prepareStatement("SELECT playlist_id FROM playlists WHERE LOWER(playlist_name) = ?;");
+            st.setString(1, playlistName.toLowerCase());
             ResultSet rs = st.executeQuery();
             
-            rs.next();
-            id = rs.getInt("playlist_id");          
-            
+            if(rs.isBeforeFirst())
+            {
+            	rs.next();
+                id = rs.getInt("playlist_id");
+            }
+            rs.close();
+            st.close();            
         }
         catch (SQLException e) 
         {
@@ -328,8 +348,9 @@ public class DB_Manager
 	{		
 		try
         {
-            PreparedStatement st = c.prepareStatement("DELETE FROM music WHERE music_id = " + playlist_id + ";");
+            PreparedStatement st = c.prepareStatement("DELETE FROM playlists WHERE playlist_id = " + playlist_id + ";");
             st.executeUpdate();
+            st.close();            
         }
         catch (SQLException e)
         {
@@ -351,9 +372,10 @@ public class DB_Manager
     {
         try
         {
-            PreparedStatement statement = c.prepareStatement("INSERT INTO playlists (playlist_name) VALUES(?);");
-            statement.setString(1, playlistName);
-            statement.executeUpdate();
+            PreparedStatement st = c.prepareStatement("INSERT INTO playlists (playlist_name) VALUES(?);");
+            st.setString(1, playlistName);
+            st.executeUpdate();
+            st.close();
         }
         catch (SQLException e)
         {
@@ -383,6 +405,7 @@ public class DB_Manager
             st.setInt(1, musicID);
             st.setInt(2, playlistId);
             result = st.executeUpdate();
+            st.close();            
         } catch (SQLException e)
         {
             e.printStackTrace();
@@ -403,16 +426,19 @@ public class DB_Manager
         try
         {
             PreparedStatement st = c.prepareStatement(
-                    "INSERT INTO music (filename, extension, artist, directory_path, genre) VALUES(?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
+                    "INSERT INTO music (filename, extension, directory_path, artist, genre) VALUES(?,?,?,?,?);", Statement.RETURN_GENERATED_KEYS);
             st.setString(1, media.getFilename());
             st.setString(2, media.getExt());
-            st.setString(3, media.getArtist());
-            st.setString(4, media.getDirectory());
+            st.setString(3, media.getDirectory());
+            st.setString(4, media.getArtist());            
             st.setString(5, media.getGenre());
             st.executeUpdate();
             ResultSet rs = st.getGeneratedKeys();
             rs.next();
-            return rs.getInt(1);
+            int id =  rs.getInt(1);
+            rs.close();
+            st.close();            
+            return id;
         }
         catch (SQLException e)
         {
@@ -436,6 +462,7 @@ public class DB_Manager
         {
             PreparedStatement st = c.prepareStatement("DELETE FROM music WHERE music_id = " + musicId + ";");
             st.executeUpdate();
+            st.close();            
         }
         catch (SQLException e)
         {
@@ -462,6 +489,7 @@ public class DB_Manager
         {
             PreparedStatement st = c.prepareStatement("DELETE FROM playlist_connections WHERE " + key + " = " + musicId + ";");
             st.executeUpdate();
+            st.close();
         }
         catch (SQLException e)
         {
@@ -485,6 +513,7 @@ public class DB_Manager
         {
             PreparedStatement st = c.prepareStatement("DELETE FROM playlist_connections WHERE music_id = " + musicId + " AND playlist_id = " + playlistId + ";");
             st.executeUpdate();
+            st.close();
         }
         catch (SQLException e)
         {
@@ -508,8 +537,8 @@ public class DB_Manager
     	Vector<MediaFile> list = new Vector<MediaFile>();
         try
         {
-            PreparedStatement st = c.prepareStatement("SELECT * FROM music WHERE filename = '?';");
-            st.setString(1, filename);
+            PreparedStatement st = c.prepareStatement("SELECT * FROM music WHERE lower(filename) = ?;");
+            st.setString(1, filename.toLowerCase());               
             ResultSet rs = st.executeQuery();
             while (rs.next())
             {
@@ -520,6 +549,8 @@ public class DB_Manager
             				rs.getString("artist"), rs.getString("genre"), rs.getInt("music_id")));
             	}
             }
+            st.close();
+            rs.close();
         }
         catch (SQLException e)
         {
@@ -543,30 +574,23 @@ public class DB_Manager
     	Vector<MediaFile> list = new Vector<MediaFile>();
         try
         {
-        	PreparedStatement st = c.prepareStatement("SELECT playlist_id FROM playlists WHERE lower(playlist_name) = '?';");
-        	st.setString(1, playlistName.toLowerCase());
-            ResultSet rs = st.executeQuery();
+            int pId = getPlaylistID(playlistName);
+            Vector<MediaFile> musics = findAllFilesByName(musicName);
+            
 
-            rs.next();
-            int id = rs.getInt("playlist_id");//return single playlist id
-
-            rs = st.executeQuery("SELECT music_id FROM playlist_connections WHERE playlist_id = " + id + ";");
-
-            while (rs.next())
-            {
-                int curID = rs.getInt("music_id");
-                PreparedStatement st2 = c.prepareStatement("SELECT filename FROM music WHERE music_id = " + curID + " AND filename = '?';");
-                st2.setString(1, musicName);
-                ResultSet rs2 = st2.executeQuery();
-                rs2.next();
-                String str = rs2.getString("filename");
-                if(str != null)
-            	{
-            		list.add(new MediaFile(str, rs.getString("extension"), rs.getString("directory_path"), 
-            				rs.getString("artist"), rs.getString("genre"), rs.getInt("music_id")));
+            for(MediaFile mf : musics)
+            {            	
+            	Statement st = c.createStatement();
+                ResultSet rs = st.executeQuery("SELECT music_id FROM playlist_connections WHERE playlist_id = " + pId + " AND music_id = " + mf.musicId + ";");
+                if(rs.isBeforeFirst())
+                {
+            		list.add(new MediaFile(mf.filename, mf.ext, mf.directory, 
+            				mf.artist, mf.genre, mf.musicId));
             	}
+                rs.close();
+                st.close();
             }
-            st.close();
+            
         } 
         catch (SQLException e)
         {
