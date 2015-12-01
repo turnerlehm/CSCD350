@@ -8,6 +8,7 @@ public class Player
 	private static volatile Player instance;
 	private volatile MediaPlayer mp;
 	private Vector<MediaPlayer> playlist;
+	private volatile DB_Manager dbm;
 	
 	private Player(){}
 	
@@ -26,18 +27,26 @@ public class Player
 	
 	public MediaPlayer getMediaPlayer(){return this.mp;}
 	
-	public void createPlaylist(Vector<String> plist)
+	public void createPlaylist(Vector<TempMediaFile> plist)
 	{
-		this.playlist = new Vector<MediaPlayer>();
-		for(String s : plist)
-			this.playlist.add(createPlayer(s));
+		if(dbm != null)
+		{
+			this.playlist = new Vector<MediaPlayer>();
+			for(TempMediaFile t : plist)
+				this.playlist.add(createPlayer(dbm.getPath(t.musicId)));
+		}
+		else
+		{
+			System.err.println("Databse manager not initialized");
+			return;
+		}
 	}
 	
 	public void startPlaying()
 	{
 		mp = playlist.get(0);
 		getMediaPlayer().play();
-		nowPlaying(mp);
+		//nowPlaying(mp);
 	}
 	
 	public void playPlaylist()
@@ -51,20 +60,20 @@ public class Player
 						player.stop();
 						mp = next;
 						next.play();
-						nowPlaying(next);
+						//nowPlaying(next);
 				}
 			});
 		}
 	}
 	
-	public void nowPlaying(MediaPlayer m)
+	/*public void nowPlaying(MediaPlayer m)
 	{
 		String file = m.getMedia().getSource();
 		file = file.substring(0, file.lastIndexOf('.'));
 		file = file.substring(file.lastIndexOf('/') + 1).replaceAll("%20", " ");
 		file = file.replace("file:", "");
 		System.out.println("--- Now Playing: " +file+ " ---");
-	}
+	}*/
 	
 	private MediaPlayer createPlayer(String path)
 	{

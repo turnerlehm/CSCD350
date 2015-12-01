@@ -8,7 +8,7 @@ public class CommandScan extends AbstractCommand implements Command
 	
 	public CommandScan()
 	{
-		super(COMMAND_TYPE.OPEN);
+		super(COMMAND_TYPE.SCAN);
 	}
 	
 	public void addFlag(Flag flagToAdd) throws InvalidCommandException

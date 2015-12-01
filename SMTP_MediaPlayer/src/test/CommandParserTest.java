@@ -1,6 +1,9 @@
 package test;
 
 import command.*;
+import command.commands.AbstractCommand;
+import command.commands.Command;
+
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +29,7 @@ public class CommandParserTest
 	public void testParseCommand()
 	{
 		String cs;
-		Command cmd;
+		AbstractCommand cmd;
 		try
 		{
 			//expected result: Command with type pause with no flags or parameters set

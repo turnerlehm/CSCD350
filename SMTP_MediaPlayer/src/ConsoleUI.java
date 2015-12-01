@@ -10,6 +10,7 @@ public class ConsoleUI extends Thread
 	private volatile static BufferedReader std_in;
 	private volatile static SystemScanner sys_scan;
 	private volatile static CommandExecutionService executor;
+	private volatile static boolean scanned;
 	
 	private ConsoleUI(){}
 	
@@ -41,25 +42,34 @@ public class ConsoleUI extends Thread
 	{
 		if(s == null)
 			throw new IllegalArgumentException("System scanner cannot be null!");
-		this.sys_scan = s;
+		if(sys_scan == null)
+			this.sys_scan = s;
+		else
+			return;
 	}
 	
 	public void setExecutor(CommandExecutionService ces)
 	{
 		if(ces == null)
 			throw new IllegalArgumentException("Command execution service cannot be null!");
-		this.executor = ces;
+		if(executor == null)
+			this.executor = ces;
+		else
+			return;
 	}
 	
-	//CAn only be called if input has been initialized and sys_scan has been initialized
+	//Can only be called once
 	public void initScan()
 	{
 		if(std_in == null || sys_scan == null)
+			return;
+		if(scanned)
 			return;
 		else
 		{
 			try {
 				sys_scan.scan(std_in);
+				scanned = true;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -70,8 +80,13 @@ public class ConsoleUI extends Thread
 	
 	public void initInput()
 	{
-		this.std_in = new BufferedReader(new InputStreamReader(System.in));
+		if(std_in == null)
+			this.std_in = new BufferedReader(new InputStreamReader(System.in));
+		else
+			return;
 	}
+	
+	public BufferedReader getInput(){return this.std_in;}
 	
 	public void run()
 	{

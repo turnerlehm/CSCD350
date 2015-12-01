@@ -1,5 +1,10 @@
 
 import java.util.*;
+
+import javafx.collections.MapChangeListener;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import java.io.*;
 
 /*
@@ -29,6 +34,13 @@ public class SystemScanner
    private Vector<String> lib_paths = new Vector<String>();
    private Vector<String> cur_plist;
    private Vector<String> cur_plist_paths;
+   private Vector<TempMediaFile> cur_play;
+
+   private volatile String artist;
+
+   private volatile String genre;
+
+   private volatile static DB_Manager dbm;
    
    private SystemScanner(){}
    
@@ -128,9 +140,42 @@ public class SystemScanner
       System.out.println("Beginning scan...this may take a few minutes depending on directory size");
       search(dir, files, paths);
       System.out.println("Scan complete");
+      addToDB();
       notify();
    }
    
+   public void setDBM(DB_Manager d)
+   {
+	   if(d != null && dbm == null)
+		   this.dbm = d;
+   }
+   
+   private synchronized void addToDB()
+   {
+	   if(dbm != null)
+	   {
+		   new javafx.embed.swing.JFXPanel();
+		   for(int i = 0; i < files.size(); i++)
+		   {
+			   artist = "";
+			   genre = "";
+			   MediaPlayer temp = new MediaPlayer(new Media(new File(paths.get(i)).toURI().toString()));
+			   temp.getMedia().getMetadata().addListener(new MapChangeListener<String, Object>(){
+				   public void onChanged(Change<? extends String, ? extends Object> ch)
+				   {
+					   if(ch.getKey().equals("artist"))
+						   artist = ch.getValueAdded().toString();
+					   if(ch.getKey().equals("genre"))
+						   genre = ch.getValueAdded().toString();
+				   }
+			   });
+			   String fname = files.get(i).substring(0, files.get(i).lastIndexOf('.'));
+			   String ext = files.get(i).substring(files.get(i).lastIndexOf('.') + 1);
+			   String dir = paths.get(i);
+			   dbm.addMedia(new MediaFile(fname, ext, dir, artist, genre));
+		   }
+	   }
+   }
    //sanity check
    /*public static void main(String[] args)
    {

@@ -15,5 +15,7 @@ public enum COMMAND_TYPE
 	PREVIOUS,
 	SEEK,
 	SCAN,
-	STOP
+	STOP,
+	NOWPLAYING,
+	INFO
 }

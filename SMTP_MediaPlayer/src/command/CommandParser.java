@@ -37,15 +37,17 @@ public class CommandParser
     		 {
     	 	 	case EXIT:
     	 	 		cmd = new CommandExit();
+    	 	 		break;
     	 	 	case HELP:
     	 	 		cmd = new CommandHelp();
     	        	 if(tokens.length == 1)
     	        	 {
-    	        		 return cmd;
+    	        		 break;
     	        	 }
     	 	 		break;
     	 	 	case NEXT:
     	 	 		cmd =  new CommandNext();
+    	 	 		break;
     	 	 	case ADD:
     	 	 		cmd = new CommandAdd();
     	 	 		break;
@@ -60,20 +62,30 @@ public class CommandParser
     	 	 		break;
     	 	 	case PAUSE:
     	 	 		cmd = new CommandPause();
+    	 	 		break;
     	 	 	case PLAY:
     	 	 		cmd = new CommandPlay();
     	 	 		break;
     	 	 	case PREVIOUS:
     	 	 		cmd = new CommandPrevious();
+    	 	 		break;
     	 	 	case SCAN:
     	 	 		cmd = new CommandScan();
-    	 	 		cmd.addFlag(new Flag(FLAG_TYPE.DIRECTORY, parseParameter(x,tokens)));
-    	 	 		return cmd;
+    	 	 		break;
     	 	 	case SEEK:
     	 	 		cmd = new CommandSeek();
     	 	 		break;
     	 	 	case STOP:
     	 	 		cmd = new CommandStop();
+    	 	 		break;
+    	 	 	case NOWPLAYING:
+    	 	 		cmd = new CommandNowPlaying();
+    	 	 		break;
+    	 	 	case INFO:
+    	 	 		cmd = new CommandInfo();
+    	 	 		break;
+    	 	 	default:
+    	 	 		throw new InvalidCommandException("Not a valid command");
     		 }
     	 }
     	 else if(x != 0 && cmd != null)
@@ -133,8 +145,8 @@ public class CommandParser
       {
     	  cmd.addFlag(new Flag(FLAG_TYPE.NOFLAG, parameter.trim()));
       }
-      if(cmd.getFlags().size() == 0)
-    	  throw new InvalidCommandException("Entered command must have parameters");
+      //if(cmd.getFlags().size() == 0)
+    	  //throw new InvalidCommandException("Entered command must have parameters");
       return cmd;
    }
    
@@ -220,6 +232,10 @@ public class CommandParser
   	   {
   		   return COMMAND_TYPE.SCAN;
   	   }
+  	   else if(command.equals("info"))
+  		   return COMMAND_TYPE.INFO;
+  	   else if(command.equals("np"))
+  		   return COMMAND_TYPE.NOWPLAYING;
 	   return COMMAND_TYPE.NOTVALID;
    }
    
