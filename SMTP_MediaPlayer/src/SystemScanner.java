@@ -140,6 +140,7 @@ public class SystemScanner
       System.out.println("Beginning scan...this may take a few minutes depending on directory size");
       search(dir, files, paths);
       System.out.println("Scan complete");
+      addToDB();
       notify();
    }
    
