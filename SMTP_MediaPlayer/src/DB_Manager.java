@@ -236,7 +236,7 @@ public class DB_Manager
     	Vector<TempMediaFile> playlistMusic = new Vector<TempMediaFile>();        
 		try
 		{		    
-		    int id = getPlaylistID(playlistName);
+		    int id = getPlaylistId(playlistName);
 		    if(id > -1)
 		    {
 		    	Statement st = c.createStatement();
@@ -311,7 +311,7 @@ public class DB_Manager
 	 *
      * @return Returns a int playlist id
      */
-    int getPlaylistID(String playlistName)
+    private int getPlaylistId(String playlistName)
 	{
     	int id = -1;
         try 
@@ -344,8 +344,9 @@ public class DB_Manager
 	 *
      * @return Returns a true if successfully deleted
      */
-	boolean deletePlaylist(int playlist_id)
+	boolean deletePlaylist(String name)
 	{		
+		int playlist_id = getPlaylistId(name);
 		try
         {
             PreparedStatement st = c.prepareStatement("DELETE FROM playlists WHERE playlist_id = " + playlist_id + ";");
@@ -396,8 +397,9 @@ public class DB_Manager
 	 * 
      * @return Returns a true if successfully added
      */
-    boolean addToPlaylist(int playlistId, int musicID)
+    boolean addToPlaylist(String playlist_name, int musicID)
     {             
+    	int playlistId = getPlaylistId(playlist_name);
         int result = 0;                
         try
         {
@@ -574,7 +576,7 @@ public class DB_Manager
     	Vector<MediaFile> list = new Vector<MediaFile>();
         try
         {
-            int pId = getPlaylistID(playlistName);
+            int pId = getPlaylistId(playlistName);
             Vector<MediaFile> musics = findAllFilesByName(musicName);
             
 
@@ -599,6 +601,29 @@ public class DB_Manager
 
         return list;
     }
+    MediaFile getInfo(int musicId)
+    {
+    	MediaFile mf = null;
+        try
+        {	
+        	Statement st = c.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM music WHERE music_id = " + musicId + ";");
+            if(rs.isBeforeFirst())
+            {
+        		mf = new MediaFile(rs.getString("filename"), rs.getString("extension"), rs.getString("directory_path"), rs.getString("artist"),
+        				rs.getString("genre"), musicId);
+        	}
+            rs.close();
+            st.close();           
+            
+        } 
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return mf;
+    }
 }
 /** Summary
     static DB_Manager 		getInstance();    
@@ -612,8 +637,7 @@ public class DB_Manager
     Vector<TempMediaFile> 	getArtist(String artistName);//returns all music files belonging to a specific artist
     Vector<TempMediaFile> 	getPlaylist(String playlistName);//returns all music files belonging to a specific playlist
     String 					getPath(int id);//retrieves the directory path of a music file by it's id    
-    int 					getPlaylistID(String playlistName);//retrieves the unique playlist_id by it's name
-	boolean 				deletePlaylist(int playlist_id);//Removes a playlist from the database
+	boolean 				deletePlaylist(String name);//Removes a playlist from the database
 	boolean 				createPlaylist(String playlistName);//Adds a new playlist to the database 
     boolean 				addToPlaylist(int playlistId, int musicID);// Adds a music file to a playlist    
     int 					addMedia(MediaFile media);//Adds a music file to the database

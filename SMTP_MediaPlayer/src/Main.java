@@ -45,7 +45,7 @@ public class Main
 	}
 	
 	static void displayTest()
-	{	
+	{			
 	}
 	void scanFiles()
 	{
