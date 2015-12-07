@@ -45,7 +45,22 @@ public class Main
 	}
 	
 	static void displayTest()
-	{			
+	{	
+		Vector<TempMediaFile> ls = dbm.getGenres();
+		for(TempMediaFile t : ls)
+		{
+			System.out.println("gen: " + t.filename);
+		}
+		Vector<TempMediaFile> ls2 = dbm.getPlaylist("booogabooga");
+		for(TempMediaFile t : ls2)
+		{
+			System.out.println("pl: " + t.filename);
+		}
+		System.out.println("path: " + dbm.getPath(1000));
+		System.out.println("delete: " + dbm.deletePlaylist("superdupertestplaylist"));
+		System.out.println("addtopl: " + dbm.addToPlaylist("relaxing", 10000));
+		System.out.println("delfrompl: " + dbm.removeFromPlaylist(10000, 10002));
+		
 	}
 	void scanFiles()
 	{
