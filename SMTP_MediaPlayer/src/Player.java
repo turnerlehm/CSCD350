@@ -113,7 +113,7 @@ public class Player
 	
 	public void resumePlaylist()
 	{
-		int i =  cur_idx;
+		int i =  this.playlist.indexOf(mp);
 		for(; i < this.playlist.size(); i++, cur_idx = (cur_idx + 1) % this.playlist.size())
 		{
 			MediaPlayer player = this.playlist.get(i);
@@ -155,7 +155,7 @@ public class Player
 	
 	public void startFrom()
 	{
-		mp = playlist.get(cur_idx);
+		mp = playlist.get(this.playlist.indexOf(mp));
 		getMediaPlayer().play();
 	}
 	
