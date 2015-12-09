@@ -185,6 +185,7 @@ public class CommandExecutionService {
 			}
 			else if(command.getType() == COMMAND_TYPE.PLAY)
 			{
+				//done
 				play(command);
 			}
 			else if(command.getType() == COMMAND_TYPE.PREVIOUS)
@@ -562,7 +563,20 @@ public class CommandExecutionService {
 	
 	public void play(AbstractCommand c)
 	{
-		
+		if((c.getFlags().size() == 1 && c.getFlags().get(0)._Flag == FLAG_TYPE.NOFLAG) || c.getFlags().size() == 0)
+		{
+			if(player.getMediaPlayer() != null && !player.noPlaylist())
+			{
+				player.getMediaPlayer().stop();
+				player.startPlaying();
+				player.playPlaylist();
+			}
+			else
+			{
+				System.err.println("No playlist currently loaded");
+				return;
+			}
+		}
 	}
 	
 	public void previous(AbstractCommand c)

@@ -67,8 +67,9 @@ public class Player
 		if(dbm != null)
 		{
 			this.playlist = new Vector<MediaPlayer>();
-			for(TempMediaFile t : plist)
+			for(int i = 0; i < plist.size(); i++)
 			{
+				TempMediaFile t = plist.get(i);
 				String path = dbm.getPath(t.musicId);
 				MediaPlayer temp = createPlayer(path);
 				if(temp != null)
@@ -76,7 +77,7 @@ public class Player
 				else
 				{
 					dbm.deleteMediaFile(t.musicId);
-					plist.remove(t);
+					plist.remove(i);
 				}
 			}
 			this.files = plist;
