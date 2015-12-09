@@ -40,7 +40,7 @@ public class Player
 		cur.stop();
 		MediaPlayer next = playlist.get((playlist.indexOf(cur) + 1) % playlist.size());
 		mp = next;
-		cur_idx = (cur_idx + 1) % playlist.size();
+		cur_idx = (playlist.indexOf(cur) + 1) % playlist.size();
 		next.play();
 	}
 	
@@ -57,8 +57,9 @@ public class Player
 		else
 		{
 			next = playlist.get(playlist.indexOf(cur) - 1);
-			cur_idx--;
+			cur_idx = playlist.indexOf(cur) - 1;
 		}
+		mp = next;
 		next.play();
 	}
 	
@@ -89,16 +90,31 @@ public class Player
 		}
 	}
 	
-	public void startPlaying()
+	public void addToPlaylist(TempMediaFile t)
 	{
-		mp = playlist.get(0);
-		getMediaPlayer().play();
-		//nowPlaying(mp);
+		if(dbm != null)
+		{
+			String path = dbm.getPath(t.musicId);
+			MediaPlayer temp = createPlayer(path);
+			if(temp != null)
+			{
+				this.playlist.add(cur_idx, temp);
+				this.files.add(cur_idx, t);
+			}
+			else
+				dbm.deleteMediaFile(t.musicId);
+		}
+		else
+		{
+			System.err.println("Database manager not initialized");
+			return;
+		}
 	}
 	
-	public void playPlaylist()
+	public void resumePlaylist()
 	{
-		for(int i = 0; i < this.playlist.size(); i++)
+		int i =  cur_idx;
+		for(; i < this.playlist.size(); i++, cur_idx = (cur_idx + 1) % this.playlist.size())
 		{
 			MediaPlayer player = this.playlist.get(i);
 			MediaPlayer next = this.playlist.get((i + 1) % this.playlist.size());
@@ -110,6 +126,55 @@ public class Player
 						//nowPlaying(next);
 				}
 			});
+			
+		}
+	}
+	
+	public void nowPlaying()
+	{
+		System.out.println("--- Now Playing: " + this.files.get(this.playlist.indexOf(mp)).filename + " ---");
+	}
+	
+	public void getSongInfo()
+	{
+		MediaFile m = dbm.getInfo(this.files.get(this.playlist.indexOf(mp)).musicId);
+		System.out.println("--- Song Info ---");
+		System.out.println("Filename: " + m.filename);
+		System.out.println("Artist: " + m.artist);
+		System.out.println("Genre: " + m.genre);
+		System.out.println("File extension: " + m.ext);
+		System.out.println("Location: " + m.directory);
+	}
+	
+	public void startPlaying()
+	{
+		mp = playlist.get(0);
+		getMediaPlayer().play();
+		//nowPlaying(mp);
+	}
+	
+	public void startFrom()
+	{
+		mp = playlist.get(cur_idx);
+		getMediaPlayer().play();
+	}
+	
+	public void playPlaylist()
+	{
+		for(int i = 0; i < this.playlist.size(); i++)
+		{
+			cur_idx = i;
+			MediaPlayer player = this.playlist.get(i);
+			MediaPlayer next = this.playlist.get((i + 1) % this.playlist.size());
+			player.setOnEndOfMedia(new Runnable() 
+			{ public void run(){
+						player.stop();
+						mp = next;
+						next.play();
+						//nowPlaying(next);
+				}
+			});
+			
 		}
 	}
 	
@@ -156,6 +221,6 @@ public class Player
 	}
 
 	public boolean noPlaylist() {
-		return playlist.size() == 0;
+		return playlist == null;
 	}
 }

@@ -32,8 +32,8 @@ public class ConsoleUI extends Thread
 		System.out.println("--- Welcome to SMTPlayer v1.something ---");
 		System.out.println("Enter group to open (by name)");
 		System.out.println("1. Music");
-		System.out.println("2. Artist");
-		System.out.println("3. Genre");
+		System.out.println("2. Artists");
+		System.out.println("3. Genres");
 		System.out.println("4. Playlists");
 		System.out.println("Type 'help' for more commands");
 	}

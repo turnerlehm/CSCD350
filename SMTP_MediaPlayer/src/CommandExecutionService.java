@@ -123,7 +123,7 @@ public class CommandExecutionService {
 			command = com_parse.parseCommand(cmd);
 		} catch (InvalidCommandException e) {
 			// TODO Auto-generated catch block
-			System.err.println("Could not parse command");
+			System.out.println("Could not parse command");
 			return;
 		}
 		if(command != null)
@@ -169,13 +169,9 @@ public class CommandExecutionService {
 				//done
 				if(player.getMediaPlayer() != null)
 				{
-					if(player.getMediaPlayer().getStatus() == MediaPlayer.Status.PLAYING)
+					
 						player.getMediaPlayer().pause();
-					else
-					{
-						System.out.println("Song is either already paused, stopped or otherwise not playing");
-						return;
-					}
+					
 				}
 				else
 				{
@@ -219,13 +215,8 @@ public class CommandExecutionService {
 			{
 				if(player.getMediaPlayer() != null)
 				{
-					if(player.getMediaPlayer().getStatus() == MediaPlayer.Status.PLAYING)
 						player.getMediaPlayer().stop();
-					else
-					{
-						System.out.println("Song is either already paused, stopped or otherwise not playing");
-						return;
-					}
+					
 				}
 				else
 				{
@@ -247,17 +238,15 @@ public class CommandExecutionService {
 				np(command);
 			}
 		}else
-			System.err.println("No command to parse.");
+			System.out.println("No command to parse.");
 	}
 	
 	private void np(AbstractCommand command) {
-		// TODO Auto-generated method stub
-		
+		player.nowPlaying();
 	}
 
 	private void info(AbstractCommand command) {
-		// TODO Auto-generated method stub
-		
+		player.getSongInfo();
 	}
 
 	private void setvol(AbstractCommand c) {
@@ -270,7 +259,7 @@ public class CommandExecutionService {
 			}
 			catch(Exception e)
 			{
-				System.err.println("Not a valid volume value");
+				System.out.println("Not a valid volume value");
 				return;
 			}
 			if(vol < 0.000000000001)
@@ -280,7 +269,7 @@ public class CommandExecutionService {
 			player.getMediaPlayer().setVolume(vol);
 		}
 		else
-			System.err.println("Coudld not set volume");
+			System.out.println("Coudld not set volume");
 	}
 
 	//these methods stubbed out pending consultation with team members
@@ -288,20 +277,22 @@ public class CommandExecutionService {
 	{
 		if(c.getFlags().size() == 1 && c.getFlags().get(0)._Flag == FLAG_TYPE.PLAYLIST)
 		{
-			String[] params = c.getFlags().get(0)._Parameter.split(" ");
-			if(params.length == 2)
+			String param = c.getFlags().get(0)._Parameter;
+			String plist = param.substring(0, param.indexOf(' '));
+			String fname = param.substring(param.indexOf(' ') + 1);
+			if(plist.length() != 0 && fname.length() != 0)
 			{
-				Vector<MediaFile> temp = dbm.findAllFilesByName(params[1]);
+				Vector<MediaFile> temp = dbm.findAllFilesByName(fname);
 				if(temp.size() == 1)
 				{
-					boolean suc = dbm.addToPlaylist(params[0], temp.get(0).musicId);
+					boolean suc = dbm.addToPlaylist(plist, temp.get(0).musicId);
 					if(suc)
 					{
 						System.out.println("Song added to playlist successfully");
 						return;
 					}
 				}
-				else
+				else if(temp.size() > 1)
 				{
 					System.out.println("--- Multiple entries found ---");
 					int count = 0;
@@ -315,32 +306,34 @@ public class CommandExecutionService {
 						String choice = in.readLine();
 						int idx = Integer.parseInt(choice);
 						MediaFile m = temp.get(idx);
-						boolean succ = dbm.addToPlaylist(params[0], m.musicId);
+						boolean succ = dbm.addToPlaylist(plist, m.musicId);
 						if(succ)
 						{
 							System.out.println("Song \"" + m.filename + "\" successfully added to playlist");
 							return;
 						}
 					} catch (IOException e) {
-						System.err.println("FATAL ERROR: Cannot read from STD_IN");
+						System.out.println("FATAL ERROR: Cannot read from STD_IN");
 						System.exit(-1);
 					}
 					catch(Exception e)
 					{
-						System.err.println("Unable to add song to playlist");
+						System.out.println("Unable to add song to playlist");
 						return;
 					}
 				}
+				else
+					System.out.println("No entries found");
 			}
 			else
 			{
-				System.err.println("Not enough params");
+				System.out.println("Not enough params/too many params");
 				return;
 			}
 		}
 		else
 		{
-			System.err.println("Invalid command");
+			System.out.println("Invalid command");
 			return;
 		}
 	}
@@ -354,10 +347,10 @@ public class CommandExecutionService {
 			if(success)
 				System.out.println("Playlist \"" + playlist + "\" added to database");
 			else
-				System.err.println("Could not add playlist \"" + playlist + "\" to database");
+				System.out.println("Could not add playlist \"" + playlist + "\" to database");
 		}
 		else
-			System.err.println("Cannot create playlist");
+			System.out.println("Cannot create playlist");
 	}
 	
 	public void delete(AbstractCommand c)
@@ -374,7 +367,7 @@ public class CommandExecutionService {
 					return;
 				}
 			}
-			else
+			else if(temp.size() > 1)
 			{
 				System.out.println("--- Multiple entries found ---");
 				int count = 0;
@@ -395,15 +388,17 @@ public class CommandExecutionService {
 						return;
 					}
 				} catch (IOException e) {
-					System.err.println("FATAL ERROR: Cannot read from STD_IN");
+					System.out.println("FATAL ERROR: Cannot read from STD_IN");
 					System.exit(-1);
 				}
 				catch(Exception e)
 				{
-					System.err.println("Unable to remove song from library");
+					System.out.println("Unable to remove song from library");
 					return;
 				}
 			}
+			else
+				System.out.println("No entries found");
 		}
 		else if(c.getFlags().size() == 1 && c.getFlags().get(0)._Flag == FLAG_TYPE.PLAYLIST)
 		{
@@ -429,7 +424,7 @@ public class CommandExecutionService {
 						return;
 					}
 				}
-				else
+				else if(temp.size() > 1)
 				{
 					System.out.println("--- Multiple entries found ---");
 					int count = 0;
@@ -450,25 +445,27 @@ public class CommandExecutionService {
 							return;
 						}
 					} catch (IOException e) {
-						System.err.println("FATAL ERROR: Cannot read from STD_IN");
+						System.out.println("FATAL ERROR: Cannot read from STD_IN");
 						System.exit(-1);
 					}
 					catch(Exception e)
 					{
-						System.err.println("Unable to remove song from playlist");
+						System.out.println("Unable to remove song from playlist");
 						return;
 					}
 				}
+				else
+					System.out.println("No entries found");
 			}
 			else
 			{
-				System.err.println("Too many command parameters");
+				System.out.println("Too many command parameters");
 				return;
 			}
 		}
 		else
 		{
-			System.err.println("Invalid command");
+			System.out.println("Invalid command");
 			return;
 		}
 	}
@@ -491,7 +488,7 @@ public class CommandExecutionService {
 			}
 		}
 		else
-			System.err.println("Not a valid command");
+			System.out.println("Not a valid command");
 	}
 	
 	public void next(AbstractCommand c)
@@ -501,7 +498,7 @@ public class CommandExecutionService {
 			player.skip();
 		}
 		else
-			System.err.println("Cannot skip, no playlist loaded");
+			System.out.println("Cannot skip, no playlist loaded");
 	}
 	
 	public void open(AbstractCommand c)
@@ -514,7 +511,7 @@ public class CommandExecutionService {
 				Vector<TempMediaFile> temp = param.equalsIgnoreCase("artists") ? dbm.getArtists() : param.equalsIgnoreCase("genres") ? dbm.getGenres() : dbm.getPlaylists();
 				System.out.println("--- Results ---");
 				for(TempMediaFile t : temp)
-					System.out.print(t.filename);
+					System.out.println(t.filename);
 			}
 			else if(param.equalsIgnoreCase("music"))
 			{
@@ -526,7 +523,7 @@ public class CommandExecutionService {
 			}
 			else
 			{
-				System.err.println("Not a valid parameter");
+				System.out.println("Not a valid parameter");
 				return;
 			}
 		}
@@ -556,7 +553,7 @@ public class CommandExecutionService {
 		}
 		else
 		{
-			System.err.println("Not a valid command");;
+			System.out.println("Not a valid command");;
 			return;
 		}
 	}
@@ -565,7 +562,18 @@ public class CommandExecutionService {
 	{
 		if((c.getFlags().size() == 1 && c.getFlags().get(0)._Flag == FLAG_TYPE.NOFLAG) || c.getFlags().size() == 0)
 		{
-			if(player.getMediaPlayer() != null && !player.noPlaylist())
+			
+			if(!player.noPlaylist() && player.getMediaPlayer() != null)
+			{
+				if(player.getMediaPlayer().getStatus() == MediaPlayer.Status.PAUSED || player.getMediaPlayer().getStatus() == MediaPlayer.Status.STOPPED)
+					player.getMediaPlayer().play();
+			}
+			else if(!player.noPlaylist() && player.getMediaPlayer() == null)
+			{
+				player.startPlaying();
+				player.playPlaylist();
+			}
+			else if(!player.noPlaylist() && player.getMediaPlayer() != null)
 			{
 				player.getMediaPlayer().stop();
 				player.startPlaying();
@@ -573,9 +581,82 @@ public class CommandExecutionService {
 			}
 			else
 			{
-				System.err.println("No playlist currently loaded");
+				System.out.println("No playlist currently loaded");
 				return;
 			}
+		}
+		else if(c.getFlags().size() == 1 && c.getFlags().get(0)._Flag == FLAG_TYPE.ARTIST)
+		{
+			Vector<TempMediaFile> temp = dbm.getArtist(c.getFlags().get(0)._Parameter);
+			player.createPlaylist(temp);
+			if(player.getMediaPlayer() != null)
+				player.getMediaPlayer().stop();
+			player.startPlaying();
+			player.playPlaylist();
+		}
+		else if(c.getFlags().size() == 1 && c.getFlags().get(0)._Flag == FLAG_TYPE.GENRE)
+		{
+			Vector<TempMediaFile> temp = dbm.getGenre(c.getFlags().get(0)._Parameter);
+			player.createPlaylist(temp);
+			if(player.getMediaPlayer() != null)
+				player.getMediaPlayer().stop();
+			player.startPlaying();
+			player.playPlaylist();
+		}
+		else if(c.getFlags().size() == 1 && c.getFlags().get(0)._Flag == FLAG_TYPE.PLAYLIST)
+		{
+			Vector<TempMediaFile> temp = dbm.getPlaylist(c.getFlags().get(0)._Parameter);
+			player.createPlaylist(temp);
+			if(player.getMediaPlayer() != null)
+				player.getMediaPlayer().stop();
+			player.startPlaying();
+			player.playPlaylist();
+		}
+		else if(c.getFlags().size() == 1 && c.getFlags().get(0)._Flag == FLAG_TYPE.SONG)
+		{
+			Vector<MediaFile> temp = dbm.findAllFilesByName(c.getFlags().get(0)._Parameter);
+			if(temp.size() == 1)
+			{
+				TempMediaFile tmf = new TempMediaFile(temp.get(0).filename, temp.get(0).musicId);
+				if(player.getMediaPlayer() != null)
+					player.getMediaPlayer().stop();
+				player.addToPlaylist(tmf);
+				player.startFrom();
+				player.resumePlaylist();
+			}
+			else if(temp.size() > 1)
+			{
+				System.out.println("--- Multiple entries found ---");
+				int count = 0;
+				for(MediaFile m : temp)
+				{
+					System.out.println(count + ". " + m.filename + " (" + m.directory + ")");
+					count++;
+				}
+				System.out.print("Which would you like to play? (0-" + (temp.size() - 1) + "): ");
+				try {
+					String choice = in.readLine();
+					int idx = Integer.parseInt(choice);
+					MediaFile m = temp.get(idx);
+					TempMediaFile tmf = new TempMediaFile(m.filename, m.musicId);
+					if(player.getMediaPlayer() != null)
+						player.getMediaPlayer().stop();
+					player.addToPlaylist(tmf);
+					player.startFrom();
+					player.resumePlaylist();
+					
+				} catch (IOException e) {
+					System.out.println("FATAL ERROR: Cannot read from STD_IN");
+					System.exit(-1);
+				}
+				catch(Exception e)
+				{
+					System.out.println("Unable to remove song from playlist");
+					return;
+				}
+			}
+			else
+				System.out.println("No entries found");
 		}
 	}
 	
@@ -586,7 +667,7 @@ public class CommandExecutionService {
 			player.previous();
 		}
 		else
-			System.err.println("Cannot go back, no playlist loaded");
+			System.out.println("Cannot go back, no playlist loaded");
 	}
 	
 	public void seek(AbstractCommand c)
@@ -597,11 +678,11 @@ public class CommandExecutionService {
 				player.getMediaPlayer().seek(Duration.valueOf(c.getFlags().get(0)._Parameter));
 			else
 			{
-				System.err.println("Not a valid command");
+				System.out.println("Not a valid command");
 				return;
 			}
 		}
 		else
-			System.err.println("No media found");
+			System.out.println("No media found");
 	}
 }
