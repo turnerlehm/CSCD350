@@ -4,7 +4,7 @@ import command.*;
 
 public class CommandDelete extends AbstractCommand implements Command
 {	
-	private FLAG_TYPE[] Allowed_Flags = new FLAG_TYPE[]{FLAG_TYPE.PLAYLIST, FLAG_TYPE.ARTIST, FLAG_TYPE.GENRE, FLAG_TYPE.NOFLAG};
+	private FLAG_TYPE[] Allowed_Flags = new FLAG_TYPE[]{FLAG_TYPE.PLAYLIST, FLAG_TYPE.NOFLAG};
 	
 	public CommandDelete()
 	{

@@ -31,7 +31,7 @@ public class Main
 		dbm.init();
 		file_scanner.setDBM(dbm);
 		CommandParser c = CommandParser.getInstance();
-		AbstractCommand cmd = c.parseCommand("pause");
+		AbstractCommand cmd = c.parseCommand("create -p my_new_playlist");
 		System.out.println(cmd._Command_Type);
 		List<Flag> flags = cmd.getFlags();
 		for(Flag f: flags)
@@ -44,6 +44,8 @@ public class Main
 		ces.setInput(user_interface.getInput());
 		ces.setPlayer(audio_player);
 		ces.setSysScan(file_scanner);
+		ces.setDBM(dbm);
+		audio_player.setDBM(dbm);
 		user_interface.setScanner(file_scanner);
 		user_interface.setExecutor(ces);
 		user_interface.initScan();

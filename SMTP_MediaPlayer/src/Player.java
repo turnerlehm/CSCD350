@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Vector;
 
 import javafx.scene.media.*;
@@ -9,6 +11,8 @@ public class Player
 	private volatile MediaPlayer mp;
 	private Vector<MediaPlayer> playlist;
 	private volatile DB_Manager dbm;
+	private volatile int cur_idx;
+	private Vector<TempMediaFile> files;
 	
 	private Player(){}
 	
@@ -27,17 +31,59 @@ public class Player
 	
 	public MediaPlayer getMediaPlayer(){return this.mp;}
 	
+	public void setDBM(DB_Manager d){this.dbm = d;}
+	
+	
+	public void skip()
+	{
+		MediaPlayer cur = mp;
+		cur.stop();
+		MediaPlayer next = playlist.get((playlist.indexOf(cur) + 1) % playlist.size());
+		mp = next;
+		cur_idx = (cur_idx + 1) % playlist.size();
+		next.play();
+	}
+	
+	public void previous()
+	{
+		MediaPlayer cur = mp;
+		cur.stop();
+		MediaPlayer next;
+		if(playlist.indexOf(cur) == 0)
+		{
+			next = playlist.get(playlist.size() - 1);
+			cur_idx = playlist.size() - 1;
+		}
+		else
+		{
+			next = playlist.get(playlist.indexOf(cur) - 1);
+			cur_idx--;
+		}
+		next.play();
+	}
+	
 	public void createPlaylist(Vector<TempMediaFile> plist)
 	{
 		if(dbm != null)
 		{
 			this.playlist = new Vector<MediaPlayer>();
 			for(TempMediaFile t : plist)
-				this.playlist.add(createPlayer(dbm.getPath(t.musicId)));
+			{
+				String path = dbm.getPath(t.musicId);
+				MediaPlayer temp = createPlayer(path);
+				if(temp != null)
+					this.playlist.add(temp);
+				else
+				{
+					dbm.deleteMediaFile(t.musicId);
+					plist.remove(t);
+				}
+			}
+			this.files = plist;
 		}
 		else
 		{
-			System.err.println("Databse manager not initialized");
+			System.err.println("Database manager not initialized");
 			return;
 		}
 	}
@@ -78,6 +124,14 @@ public class Player
 	private MediaPlayer createPlayer(String path)
 	{
 		new javafx.embed.swing.JFXPanel();
+		try
+		{
+			FileReader temp = new FileReader(path);
+		}
+		catch(Exception e)
+		{
+			return null;
+		}
 		Media media = new Media(new File(path).toURI().toString());
 		MediaPlayer tmp = new MediaPlayer(media);
 		tmp.setVolume(0.3);
@@ -98,5 +152,9 @@ public class Player
 		mp.setVolume(0.3);
 		mp.setAutoPlay(true);
 		mp.play();
+	}
+
+	public boolean noPlaylist() {
+		return playlist.size() == 0;
 	}
 }

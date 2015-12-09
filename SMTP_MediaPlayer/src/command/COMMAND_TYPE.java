@@ -17,5 +17,6 @@ public enum COMMAND_TYPE
 	SCAN,
 	STOP,
 	NOWPLAYING,
-	INFO
+	INFO,
+	SETVOL
 }

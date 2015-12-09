@@ -30,7 +30,7 @@ public class ConsoleUI extends Thread
 	public void initMenu()
 	{
 		System.out.println("--- Welcome to SMTPlayer v1.something ---");
-		System.out.println("Enter group to open (by number or name)");
+		System.out.println("Enter group to open (by name)");
 		System.out.println("1. Music");
 		System.out.println("2. Artist");
 		System.out.println("3. Genre");

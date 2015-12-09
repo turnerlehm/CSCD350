@@ -84,6 +84,9 @@ public class CommandParser
     	 	 	case INFO:
     	 	 		cmd = new CommandInfo();
     	 	 		break;
+    	 	 	case SETVOL:
+    	 	 		cmd = new CommandSetVolume();
+    	 	 		break;
     	 	 	default:
     	 	 		throw new InvalidCommandException("Not a valid command");
     		 }
@@ -236,6 +239,8 @@ public class CommandParser
   		   return COMMAND_TYPE.INFO;
   	   else if(command.equals("np"))
   		   return COMMAND_TYPE.NOWPLAYING;
+  	   else if(command.equals("sv"))
+  		   return COMMAND_TYPE.SETVOL;
 	   return COMMAND_TYPE.NOTVALID;
    }
    
