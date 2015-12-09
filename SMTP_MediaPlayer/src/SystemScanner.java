@@ -32,9 +32,21 @@ public class SystemScanner
    private Vector<String> paths;
    private Vector<String> lib_files = new Vector<String>();
    private Vector<String> lib_paths = new Vector<String>();
+<<<<<<< HEAD
    private volatile DB_Manager dbm;
    private volatile String artist;
    private volatile String genre;
+=======
+   private Vector<String> cur_plist;
+   private Vector<String> cur_plist_paths;
+   private Vector<TempMediaFile> cur_play;
+
+   private volatile String artist;
+
+   private volatile String genre;
+
+   private volatile static DB_Manager dbm;
+>>>>>>> refs/remotes/origin/Turner_test_branch
    
    private SystemScanner(){}
    
@@ -144,6 +156,15 @@ public class SystemScanner
       notify();
    }
    
+<<<<<<< HEAD
+=======
+   public void setDBM(DB_Manager d)
+   {
+	   if(d != null && dbm == null)
+		   this.dbm = d;
+   }
+   
+>>>>>>> refs/remotes/origin/Turner_test_branch
    private synchronized void addToDB()
    {
 	   if(dbm != null)
@@ -153,7 +174,11 @@ public class SystemScanner
 		   {
 			   artist = "";
 			   genre = "";
+<<<<<<< HEAD
 			   MediaPlayer temp = new MediaPlayer(new Media(paths.get(i)));
+=======
+			   MediaPlayer temp = new MediaPlayer(new Media(new File(paths.get(i)).toURI().toString()));
+>>>>>>> refs/remotes/origin/Turner_test_branch
 			   temp.getMedia().getMetadata().addListener(new MapChangeListener<String, Object>(){
 				   public void onChanged(Change<? extends String, ? extends Object> ch)
 				   {
@@ -170,7 +195,10 @@ public class SystemScanner
 		   }
 	   }
    }
+<<<<<<< HEAD
    
+=======
+>>>>>>> refs/remotes/origin/Turner_test_branch
    //sanity check
    /*public static void main(String[] args)
    {
